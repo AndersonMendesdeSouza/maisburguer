@@ -147,17 +147,17 @@ export function Main() {
             </div>
 
             <div className={styles.headerRight}>
-              <button className={styles.searchBtn}>
-                <Search size={18} />
-                <span>Buscar</span>
-              </button>
-
               <button className={styles.cartBtn}>
                 <ShoppingCart size={18} />
                 R$ 42,00
               </button>
             </div>
           </div>
+
+          <button className={styles.searchBtn}>
+            <Search size={18} />
+            <span>Buscar</span>
+          </button>
         </header>
 
         <div className={styles.containerSec}>
@@ -171,8 +171,10 @@ export function Main() {
                     4.8 <Star size={14} />
                   </span>
                 </div>
-                <h1 className={styles.heroTitle}>O Verdadeiro</h1>
-                <h2 className={styles.heroAccent}>Sabor Artesanal</h2>
+                <div>
+                  <h1 className={styles.heroTitle}>O Verdadeiro</h1>
+                  <h2 className={styles.heroAccent}>Sabor Artesanal</h2>
+                </div>
                 <p className={styles.heroDesc}>
                   Ingredientes selecionados, carnes nobres e aquele molho especial
                   que você só encontra aqui.
