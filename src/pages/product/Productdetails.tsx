@@ -1,5 +1,4 @@
-// ProductDetails.tsx
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import styles from "./Productdetails.module.css";
 import { Share2, Minus, Plus, Check } from "lucide-react";
 import { FoodCard } from "../../components/food/FoodCard";
