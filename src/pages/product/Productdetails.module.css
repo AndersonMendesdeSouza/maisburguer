@@ -260,7 +260,6 @@
   color: rgba(255, 255, 255, 0.35);
 }
 
-/* COMPLEMENTOS FULL WIDTH (embaixo de tudo) */
 .complementsSection {
   width: 100%;
   margin-top: 20px;
@@ -279,10 +278,9 @@
 
 .compItem {
   flex: 0 0 auto;
-  min-width: 240px; /* para ficar igual ao print (cards grandes) */
+  min-width: 240px; 
 }
 
-/* BOTTOM BAR FULL WIDTH */
 .bottomBar {
   width: 100%;
   margin-top: 14px;
