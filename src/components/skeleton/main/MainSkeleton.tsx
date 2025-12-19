@@ -1,4 +1,4 @@
-import styles from "./mainSkeleton.module.css";
+import styles from "./MainSkeleton.module.css";
 
 export function MainSkeleton() {
   return (

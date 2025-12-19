@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import whatsapp from "../../assets/whatsapp.png";
-import { MainSkeleton } from "../../components/skeleton/main/mainSkeleton";
+import { MainSkeleton } from "../../components/skeleton/main/MainSkeleton";
 type Product = {
   id: number;
   name: string;
