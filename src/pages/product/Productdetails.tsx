@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import styles from "./Productdetails.module.css";
 import { Share2, Minus, Plus, Check } from "lucide-react";
 import { FoodCard } from "../../components/food/FoodCard";
@@ -25,6 +25,7 @@ const BRL = (v: number) =>
   v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
 export default function ProductDetails() {
+  const navigation = useNavigate();
   const location = useLocation();
   const [qty, setQty] = useState(1);
   const [note, setNote] = useState("");
@@ -35,7 +36,14 @@ export default function ProductDetails() {
 
   useEffect(() => {
     const item = (location.state as { item?: ProductResponseDto } | null)?.item;
-    if (item) setProducts(item);
+
+    if (item) {
+      setProducts(item);
+
+      requestAnimationFrame(() => {
+        window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+      });
+    }
   }, [location.state]);
 
   const addons: Addon[] = [
@@ -45,48 +53,83 @@ export default function ProductDetails() {
     { id: "ovo", name: "Ovo Frito", desc: "Gema mole", price: 2.6 },
   ];
 
-  const complements: Complement[] = [
+  const complements: ProductResponseDto[] = [
     {
-      id: "batata",
-      name: "Batata Rústica",
-      desc: "Porção com ervas finas",
-      price: 14,
-      img: "https://images.unsplash.com/photo-1541592106381-b31e9677c0e5?auto=format&fit=crop&w=1000&q=70",
+      id: 1,
+      name: "Monster Bacon",
+      desc: "Hambúrguer artesanal 160g, cheddar, bacon crocante e molho especial.",
+      price: 32,
+      badge: "MAIS PEDIDO",
+      img: "https://images.unsplash.com/photo-1550547660-d9450f859349",
+      category: "Sanduíches",
     },
     {
-      id: "coca",
+      id: 2,
+      name: "Classic Salad",
+      desc: "Pão brioche, blend 160g, alface, tomate e maionese.",
+      price: 28,
+      img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd",
+      category: "Sanduíches",
+    },
+    {
+      id: 3,
+      name: "Monster Bacon",
+      desc: "Hambúrguer artesanal 160g, cheddar, bacon crocante e molho especial.",
+      price: 32,
+      badge: "MAIS PEDIDO",
+      img: "https://images.unsplash.com/photo-1550547660-d9450f859349",
+      category: "Sanduíches",
+    },
+    {
+      id: 4,
+      name: "Classic Salad",
+      desc: "Pão brioche, blend 160g, alface, tomate e maionese.",
+      price: 28,
+      img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd",
+      category: "Sanduíches",
+    },
+    {
+      id: 7,
       name: "Coca-Cola Lata",
-      desc: "350ml, bem gelada",
       price: 6,
-      img: "https://images.unsplash.com/photo-1610873167013-2dd675d30ef4?auto=format&fit=crop&w=1000&q=70",
+      desc: "Refrigerante 350ml",
+      img: "https://blog.somostera.com/hubfs/Blog_free_images/Uma%20lata%20de%20coca%20cola%20em%20cima%20da%20mesa.jpg",
+      category: "Bebidas",
     },
     {
-      id: "onion",
-      name: "Onion Rings",
-      desc: "Anéis crocantes (8un)",
-      price: 16.9,
-      img: "https://images.unsplash.com/photo-1550547660-9dff7b68fb28?auto=format&fit=crop&w=1000&q=70",
+      id: 8,
+      name: "Coca-Cola 2L",
+      price: 6,
+      desc: "Garrafa 2L",
+      img: "https://felicitapizzaria.chefware.com.br/67/0/0/coca-cola-2-litros.jpg",
+      category: "Bebidas",
     },
     {
-      id: "milk",
-      name: "Milkshake Morango",
-      desc: "Cremoso e gelado",
-      price: 18.9,
-      img: "https://images.unsplash.com/photo-1579954115545-a95591f28bfc?auto=format&fit=crop&w=1000&q=70",
+      id: 9,
+      name: "Suco de Laranja",
+      price: 8,
+      desc: "Natural",
+      img: "https://www.sabornamesa.com.br/media/k2/items/cache/b018fd5ec8f1b90a1c8015900c2c2630_XL.jpg",
+      category: "Bebidas",
     },
     {
-      id: "agua",
-      name: "Água Mineral",
-      desc: "Sem gás, 500ml",
-      price: 4.5,
-      img: "https://images.unsplash.com/photo-1560847468-5eef330d6b1a?auto=format&fit=crop&w=1000&q=70",
+      id: 10,
+      name: "Batata Frita",
+      price: 12,
+      desc: "Porção",
+      img: "https://swiftbr.vteximg.com.br/arquivos/ids/201377-768-768/622291-batata-airfryer-extra-croc-mccain_3.jpg?v=638657204471230000",
+      category: "Adicionais",
     },
   ];
+
+  const goDetails = (item: ProductResponseDto) => {
+    navigation(`/productDetails?id=${item.id}`, { state: { item } });
+  };
 
   const addonsTotal = useMemo(
     () =>
       addons.reduce((acc, a) => acc + (selectedAddons[a.id] ? a.price : 0), 0),
-    [addons, selectedAddons]
+    [selectedAddons]
   );
 
   const total = ((products?.price ?? 0) + addonsTotal) * qty;
@@ -165,51 +208,49 @@ export default function ProductDetails() {
           </div>
         </div>
       </div>
-<div className={styles.bottomBar}>
-    <div className={styles.stepperWrapper}>
-      <div className={styles.stepper}>
-        <button
-          className={styles.stepBtn}
-          onClick={() => setQty((v) => Math.max(1, v - 1))}
-        >
-          <Minus size={16} />
-        </button>
 
-        <div className={styles.stepValue}>{qty}</div>
+      <div className={styles.bottomBar}>
+        <div className={styles.stepperWrapper}>
+          <div className={styles.stepper}>
+            <button
+              className={styles.stepBtn}
+              onClick={() => setQty((v) => Math.max(1, v - 1))}
+            >
+              <Minus size={16} />
+            </button>
 
-        <button
-          className={styles.stepBtn}
-          onClick={() => setQty((v) => v + 1)}
-        >
-          <Plus size={16} />
-        </button>
-    </div>
+            <div className={styles.stepValue}>{qty}</div>
 
-    <div className={styles.buttonsWrapper}>
-      <button className={styles.addBtn} type="button">
-        <span>Adicionar</span>
-        <span className={styles.addBtnPrice}>{BRL(total)}</span>
-      </button>
+            <button className={styles.stepBtn} onClick={() => setQty((v) => v + 1)}>
+              <Plus size={16} />
+            </button>
+          </div>
 
-      <button
-        className={styles.finilyBtn}
-        type="button"
-        onClick={() =>
-          sendOrderToWhatsApp([
-            {
-              name: products.name,
-              quantity: qty,
-              price: products.price + addonsTotal,
-            },
-          ])
-        }
-      >
-        <span>Pedir</span>
-        <span className={styles.addBtnPrice}>{BRL(total)}</span>
-      </button>
-    </div>
-  </div>
-</div>
+          <div className={styles.buttonsWrapper}>
+            <button className={styles.addBtn} type="button">
+              <span>Adicionar</span>
+              <span className={styles.addBtnPrice}>{BRL(total)}</span>
+            </button>
+
+            <button
+              className={styles.finilyBtn}
+              type="button"
+              onClick={() =>
+                sendOrderToWhatsApp([
+                  {
+                    name: products.name,
+                    quantity: qty,
+                    price: products.price + addonsTotal,
+                  },
+                ])
+              }
+            >
+              <span>Pedir</span>
+              <span className={styles.addBtnPrice}>{BRL(total)}</span>
+            </button>
+          </div>
+        </div>
+      </div>
 
       <div className={styles.complementsSection}>
         <h2 className={styles.sectionTitle}>Complementos</h2>
@@ -217,7 +258,13 @@ export default function ProductDetails() {
         <div className={styles.complements}>
           {complements.map((c) => (
             <div key={c.id} className={styles.compItem}>
-              <FoodCard img={c.img} name={c.name} desc={c.desc} />
+              <FoodCard
+                img={c.img}
+                name={c.name}
+                desc={c.desc}
+                price={c.price}
+                onDetails={() => goDetails(c)}
+              />
             </div>
           ))}
         </div>
