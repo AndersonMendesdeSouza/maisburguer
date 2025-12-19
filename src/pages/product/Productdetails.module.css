@@ -143,7 +143,10 @@
   color: rgba(255, 255, 255, 0.78);
   font-weight: 800;
 }
-
+.buttonsWrapper{
+  display: flex;
+  gap: 10px;
+}
 .sectionChip {
   font-size: 10px;
   padding: 4px 10px;
@@ -281,15 +284,33 @@
   min-width: 240px; 
 }
 
+/* ============================= */
+/* ======= BOTTOM BAR ========= */
+/* ============================= */
 .bottomBar {
   width: 100%;
   margin-top: 14px;
   display: flex;
-  justify-content: flex-end;
-  gap: 20px;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+}
+.stepperWrapper{
+  margin: 10px;
 }
 
+.bottomContent {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  width: 100%;
+  flex-wrap: wrap;
+}
+.stepperWrapper{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
 .stepper {
   height: 44px;
   width: 150px;
@@ -300,6 +321,7 @@
   grid-template-columns: 44px 1fr 44px;
   align-items: center;
   overflow: hidden;
+  margin-bottom: 20px;
 }
 
 .stepBtn {
@@ -340,14 +362,14 @@
   box-shadow: 0 14px 30px rgba(242, 201, 76, 0.14);
   transition: transform 120ms ease, filter 120ms ease;
   box-sizing: border-box;
-  justify-self: end;
 }
+
 .finilyBtn {
   height: 44px;
   width: 150px;
   border-radius: 999px;
   border: 1px solid rgb(255, 255, 255);
-  background:  rgba(33, 33, 33, 0.82);
+  background: rgba(33, 33, 33, 0.82);
   color: rgba(255, 255, 255, 0.86);
   font-weight: 900;
   display: flex;
@@ -359,7 +381,6 @@
   box-shadow: 0 14px 30px rgba(242, 201, 76, 0.14);
   transition: transform 120ms ease, filter 120ms ease;
   box-sizing: border-box;
-  justify-self: end;
 }
 
 .addBtn:hover {
@@ -399,5 +420,14 @@
 
   .compItem {
     min-width: 210px;
+  }
+
+  .addBtn {
+    justify-self: stretch;
+    width: 50%;
+  }
+
+  .finilyBtn {
+    width: 130px;
   }
 }

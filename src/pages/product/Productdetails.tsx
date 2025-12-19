@@ -165,49 +165,51 @@ export default function ProductDetails() {
           </div>
         </div>
       </div>
-
-      <div className={styles.bottomBar}>
-        <div className={styles.stepper}>
-          <button
-            className={styles.stepBtn}
-            onClick={() => setQty((v) => Math.max(1, v - 1))}
-          >
-            <Minus size={16} />
-          </button>
-
-          <div className={styles.stepValue}>{qty}</div>
-
-          <button
-            className={styles.stepBtn}
-            onClick={() => setQty((v) => v + 1)}
-          >
-            <Plus size={16} />
-          </button>
-        </div>
-
-        <button className={styles.addBtn} type="button">
-          <span>Adicionar</span>
-          <span className={styles.addBtnPrice}>{BRL(total)}</span>
-        </button>
-
-        {/* ✅ AJUSTE AQUI */}
+<div className={styles.bottomBar}>
+    <div className={styles.stepperWrapper}>
+      <div className={styles.stepper}>
         <button
-          className={styles.finilyBtn}
-          type="button"
-          onClick={() =>
-            sendOrderToWhatsApp([
-              {
-                name: products.name,
-                quantity: qty,
-                price: products.price + addonsTotal,
-              },
-            ])
-          }
+          className={styles.stepBtn}
+          onClick={() => setQty((v) => Math.max(1, v - 1))}
         >
-          <span>Pedir</span>
-          <span className={styles.addBtnPrice}>{BRL(total)}</span>
+          <Minus size={16} />
         </button>
-      </div>
+
+        <div className={styles.stepValue}>{qty}</div>
+
+        <button
+          className={styles.stepBtn}
+          onClick={() => setQty((v) => v + 1)}
+        >
+          <Plus size={16} />
+        </button>
+    </div>
+
+    <div className={styles.buttonsWrapper}>
+      <button className={styles.addBtn} type="button">
+        <span>Adicionar</span>
+        <span className={styles.addBtnPrice}>{BRL(total)}</span>
+      </button>
+
+      <button
+        className={styles.finilyBtn}
+        type="button"
+        onClick={() =>
+          sendOrderToWhatsApp([
+            {
+              name: products.name,
+              quantity: qty,
+              price: products.price + addonsTotal,
+            },
+          ])
+        }
+      >
+        <span>Pedir</span>
+        <span className={styles.addBtnPrice}>{BRL(total)}</span>
+      </button>
+    </div>
+  </div>
+</div>
 
       <div className={styles.complementsSection}>
         <h2 className={styles.sectionTitle}>Complementos</h2>
