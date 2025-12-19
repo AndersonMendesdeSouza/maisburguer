@@ -12,6 +12,7 @@ import {
   HamburgerIcon,
   Star,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 type Product = {
   id: number;
@@ -101,6 +102,8 @@ const categoryIcons: Record<string, any> = {
 
 export function Main() {
   const [category, setCategory] = useState<string | null>(null);
+  const navigation = useNavigate();
+
 
   const categories = useMemo(() => {
     return Array.from(new Set(productsMock.map((p) => p.category))).map(
@@ -229,7 +232,9 @@ export function Main() {
 
                   <div className={cat === "Bebidas" ? styles.grid3 : styles.grid4}>
                     {items.map((item) => (
-                      <FoodCard key={item.id} {...item} />
+                      <button onClick={()=> navigation("/productDetails")}>
+                        <FoodCard  key={item.id} {...item} />
+                      </button>
                     ))}
                   </div>
                 </section>
