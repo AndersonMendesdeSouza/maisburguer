@@ -5,12 +5,10 @@
   width: 100%;
   padding: 20px;
   box-sizing: border-box;
-  color: rgba(255, 255, 255, 0.92);
   font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue",
     Arial;
 }
 
-/* TOPO (imagem + conteúdo) */
 .top {
   width: 100%;
   display: grid;
@@ -18,7 +16,6 @@
   gap: 18px;
   border-radius: 22px;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.015));
-  border: 1px solid rgba(255, 255, 255, 0.06);
   box-shadow: 0 22px 80px rgba(0, 0, 0, 0.55);
   box-sizing: border-box;
 }
@@ -79,6 +76,7 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
+  border-radius: 20px;
   min-width: 0;
   background: radial-gradient(900px 380px at 25% 0%, rgba(255, 255, 255, 0.05), transparent),
     radial-gradient(900px 380px at 90% 10%, rgba(255, 255, 255, 0.03), transparent),
