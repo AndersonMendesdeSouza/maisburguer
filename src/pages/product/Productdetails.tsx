@@ -1,7 +1,8 @@
+// src/pages/ProductDetails/ProductDetails.tsx
 import { useMemo, useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import styles from "./Productdetails.module.css";
-import { Share2, Minus, Plus, Check } from "lucide-react";
+import { Share2, Minus, Plus, Check, ArrowLeft } from "lucide-react";
 import { FoodCard } from "../../components/food/FoodCard";
 import type { ProductResponseDto } from "../../dtos/Product-Response.Dto";
 import { sendOrderToWhatsApp } from "../../utils/sendOrderToWhatsApp";
@@ -40,8 +41,18 @@ export default function ProductDetails() {
 
   const addons: Addon[] = [
     { id: "bacon", name: "Bacon Extra", desc: "Fatia extra crocante", price: 4 },
-    { id: "cheddar", name: "Queijo Cheddar", desc: "Extra cremosidade", price: 3 },
-    { id: "maionese", name: "Maionese Verde", desc: "Maionese da casa", price: 2 },
+    {
+      id: "cheddar",
+      name: "Queijo Cheddar",
+      desc: "Extra cremosidade",
+      price: 3,
+    },
+    {
+      id: "maionese",
+      name: "Maionese Verde",
+      desc: "Maionese da casa",
+      price: 2,
+    },
     { id: "ovo", name: "Ovo Frito", desc: "Gema mole", price: 2.6 },
   ];
 
@@ -136,20 +147,39 @@ export default function ProductDetails() {
     <div className={styles.page}>
       <div className={styles.top}>
         <div className={styles.media}>
-          <img className={styles.mediaImg} src={products.img} alt={products.name} />
+          <img
+            className={styles.mediaImg}
+            src={products.img}
+            alt={products.name}
+          />
+
+          <button
+            type="button"
+            className={styles.backBtn}
+            aria-label="Voltar"
+            onClick={() => navigation(-1)}
+          >
+            <ArrowLeft size={18} />
+          </button>
+
+          <button
+            type="button"
+            className={styles.shareBtn}
+            aria-label="Compartilhar"
+          >
+            <Share2 size={18} />
+          </button>
         </div>
 
         <div className={styles.content}>
-          <button className={styles.shareBtn} aria-label="Compartilhar">
-            <Share2 size={18} />
-          </button>
-
           <div className={styles.header}>
             <h1 className={styles.title}>{products.name}</h1>
 
             <div className={styles.priceRow}>
               <span className={styles.price}>{BRL(products.price)}</span>
-              <span className={styles.badge}>{products.badge}</span>
+              {products.badge ? (
+                <span className={styles.badge}>{products.badge}</span>
+              ) : null}
             </div>
 
             <p className={styles.desc}>{products.desc}</p>
@@ -168,11 +198,17 @@ export default function ProductDetails() {
                   <button
                     key={a.id}
                     type="button"
-                    className={`${styles.addonRow} ${active ? styles.addonActive : ""}`}
+                    className={`${styles.addonRow} ${
+                      active ? styles.addonActive : ""
+                    }`}
                     onClick={() => toggleAddon(a.id)}
                   >
                     <span className={styles.toggle}>
-                      <span className={`${styles.toggleKnob} ${active ? styles.toggleOn : ""}`}>
+                      <span
+                        className={`${styles.toggleKnob} ${
+                          active ? styles.toggleOn : ""
+                        }`}
+                      >
                         {active ? <Check size={14} /> : null}
                       </span>
                     </span>
@@ -207,13 +243,20 @@ export default function ProductDetails() {
             <button
               className={styles.stepBtn}
               onClick={() => setQty((v) => Math.max(1, v - 1))}
+              type="button"
+              aria-label="Diminuir quantidade"
             >
               <Minus size={16} />
             </button>
 
             <div className={styles.stepValue}>{qty}</div>
 
-            <button className={styles.stepBtn} onClick={() => setQty((v) => v + 1)}>
+            <button
+              className={styles.stepBtn}
+              onClick={() => setQty((v) => v + 1)}
+              type="button"
+              aria-label="Aumentar quantidade"
+            >
               <Plus size={16} />
             </button>
           </div>

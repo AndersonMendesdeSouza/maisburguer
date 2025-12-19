@@ -6,7 +6,8 @@
   padding: 20px;
   box-sizing: border-box;
   color: rgba(255, 255, 255, 0.92);
-  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue",
+    Arial;
 }
 
 /* TOPO (imagem + conteúdo) */
@@ -40,6 +41,39 @@
   transform: scale(1.02);
 }
 
+/* BOTÕES EM CIMA DA IMAGEM */
+.backBtn,
+.shareBtn {
+  position: absolute;
+  top: 10px;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(6px);
+  color: rgba(255, 255, 255, 0.92);
+  cursor: pointer;
+  transition: transform 120ms ease, background 120ms ease, border 120ms ease;
+}
+
+.backBtn {
+  left: 10px;
+}
+
+.shareBtn {
+  right: 10px;
+}
+
+.backBtn:hover,
+.shareBtn:hover {
+  transform: translateY(-1px);
+  background: rgba(0, 0, 0, 0.45);
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
 .content {
   position: relative;
   display: flex;
@@ -47,35 +81,11 @@
   gap: 14px;
   min-width: 0;
   background: radial-gradient(900px 380px at 25% 0%, rgba(255, 255, 255, 0.05), transparent),
-  radial-gradient(900px 380px at 90% 10%, rgba(255, 255, 255, 0.03), transparent),
-  #0b0c0f;
+    radial-gradient(900px 380px at 90% 10%, rgba(255, 255, 255, 0.03), transparent),
+    #0b0c0f;
   padding: 20px;
   border-top-left-radius: 40px;
   border-top-right-radius: 40px;
-  padding: 20px;
-
-}
-
-.shareBtn {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 36px;
-  height: 36px;
-  display: grid;
-  place-items: center;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(255, 255, 255, 0.03);
-  color: rgba(255, 255, 255, 0.85);
-  cursor: pointer;
-  transition: transform 120ms ease, background 120ms ease, border 120ms ease;
-}
-
-.shareBtn:hover {
-  transform: translateY(-1px);
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.12);
 }
 
 .header {
@@ -142,10 +152,12 @@
   color: rgba(255, 255, 255, 0.78);
   font-weight: 800;
 }
-.buttonsWrapper{
+
+.buttonsWrapper {
   display: flex;
   gap: 10px;
 }
+
 .sectionChip {
   font-size: 10px;
   padding: 4px 10px;
@@ -265,7 +277,7 @@
 .complementsSection {
   width: 100%;
   margin-top: 20px;
-    padding: 20px;
+  padding: 20px;
 }
 
 .complements {
@@ -281,7 +293,7 @@
 
 .compItem {
   flex: 0 0 auto;
-  min-width: 240px; 
+  min-width: 240px;
 }
 
 /* ============================= */
@@ -295,8 +307,12 @@
   align-items: flex-end;
   gap: 12px;
 }
-.stepperWrapper{
+
+.stepperWrapper {
   margin: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
 }
 
 .bottomContent {
@@ -306,11 +322,7 @@
   width: 100%;
   flex-wrap: wrap;
 }
-.stepperWrapper{
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-}
+
 .stepper {
   height: 44px;
   width: 150px;
@@ -368,9 +380,9 @@
   height: 44px;
   width: 150px;
   border-radius: 999px;
-  border: 1px solid  rgba(242, 201, 76, 0.98);
+  border: 1px solid rgba(242, 201, 76, 0.98);
   background: rgba(33, 33, 33, 0.82);
-  color:  rgba(242, 201, 76, 0.98);
+  color: rgba(242, 201, 76, 0.98);
   font-weight: 600;
   display: flex;
   align-items: center;
@@ -398,12 +410,13 @@
   .page {
     padding: 0px;
   }
+
   .top {
     grid-template-columns: 1fr;
   }
 
   .media {
-    height: 400px;
+    height: 350px;
   }
 
   .addBtn {
@@ -418,7 +431,7 @@
 
   .top {
     padding: 12px;
-    gap: 12px;
+    gap: 0px;
   }
 
   .compItem {
