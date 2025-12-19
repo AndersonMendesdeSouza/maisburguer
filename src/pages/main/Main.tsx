@@ -12,6 +12,7 @@ import {
   Star,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import whatsapp from "../../assets/whatsapp.png";
 
 type Product = {
   id: number;
@@ -99,6 +100,16 @@ const categoryIcons: Record<string, any> = {
   Sobremesas: IceCream,
 };
 
+const handleWatsappClick = () => {
+  const phone = "5564999663524";
+  const text = "Boa noite! Tudo Bem?";
+  window.open(
+    `https://wa.me/${phone}?text=${encodeURIComponent(text)}`,
+    "_blank",
+    "noopener,noreferrer"
+  );
+};
+
 export function Main() {
   const [category, setCategory] = useState<string | null>(null);
   const navigation = useNavigate();
@@ -162,17 +173,14 @@ export function Main() {
           </button>
         </header>
 
+        <div className={styles.whatsappFloat} onClick={() => handleWatsappClick()}>
+          <img src={whatsapp} alt="WhatsApp" />
+        </div>
+
         <div className={styles.containerSec}>
           <section className={styles.hero}>
             <div className={styles.heroOverlay} />
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                paddingTop: 30,
-              }}
-            >
+            <div className={styles.heroCenter}>
               <div className={styles.heroContent}>
                 <div className={styles.heroBadges}>
                   <span className={styles.openBadge}>ABERTO AGORA</span>
@@ -196,9 +204,8 @@ export function Main() {
             <button
               type="button"
               onClick={() => setCategory(null)}
-              className={`${styles.categoryPill} ${
-                category === null ? styles.categoryActive : ""
-              }`}
+              className={`${styles.categoryPill} ${category === null ? styles.categoryActive : ""
+                }`}
             >
               Todos
             </button>
@@ -210,9 +217,8 @@ export function Main() {
                   key={item.name}
                   type="button"
                   onClick={() => setCategory(item.name)}
-                  className={`${styles.categoryPill} ${
-                    category === item.name ? styles.categoryActive : ""
-                  }`}
+                  className={`${styles.categoryPill} ${category === item.name ? styles.categoryActive : ""
+                    }`}
                 >
                   <Icon size={18} />
                   <span>{item.name}</span>
@@ -221,71 +227,39 @@ export function Main() {
             })}
           </div>
 
-          {category === null ? (
-            Object.entries(groupedProducts).map(([cat, items]) => {
-              const Icon = categoryIcons[cat];
-
-              return (
-                <section key={cat} className={styles.section}>
-                  <div className={styles.sectionHeader}>
-                    <div className={styles.sectionLeft}>
-                      <Icon size={20} />
-                      <h2 className={styles.sectionTitle}>{cat}</h2>
-                    </div>
-
-                    <span className={styles.sectionCount}>
-                      <span className={styles.sectionQuant}>{items.length}</span>
-                      <span> opções</span>
-                    </span>
+          {Object.entries(
+            category === null ? groupedProducts : { [category]: groupedProducts[category] }
+          ).map(([cat, items]) => {
+            const Icon = categoryIcons[cat];
+            return (
+              <section key={cat} className={styles.section}>
+                <div className={styles.sectionHeader}>
+                  <div className={styles.sectionLeft}>
+                    <Icon size={20} />
+                    <h2 className={styles.sectionTitle}>{cat}</h2>
                   </div>
-
-                  <div className={cat === "Bebidas" ? styles.grid3 : styles.grid4}>
-                    {items.map((item) => (
-                      <FoodCard
-                        key={item.id}
-                        name={item.name}
-                        desc={item.desc}
-                        price={item.price}
-                        img={item.img}
-                        badge={item.badge}
-                        onDetails={() => goDetails(item.id)}
-                      />
-                    ))}
-                  </div>
-                </section>
-              );
-            })
-          ) : (
-            <section className={styles.section}>
-              <div className={styles.sectionHeader}>
-                <div className={styles.sectionLeft}>
-                  {React.createElement(categoryIcons[category], { size: 20 })}
-                  <h2 className={styles.sectionTitle}>{category}</h2>
+                  <span className={styles.sectionCount}>
+                    <span className={styles.sectionQuant}>{items.length}</span>
+                    <span> opções</span>
+                  </span>
                 </div>
 
-                <span className={styles.sectionCount}>
-                  <span className={styles.sectionQuant}>
-                    {groupedProducts[category].length}
-                  </span>
-                  <span> opções</span>
-                </span>
-              </div>
-
-              <div className={category === "Bebidas" ? styles.grid3 : styles.grid4}>
-                {groupedProducts[category].map((item) => (
-                  <FoodCard
-                    key={item.id}
-                    name={item.name}
-                    desc={item.desc}
-                    price={item.price}
-                    img={item.img}
-                    badge={item.badge}
-                    onDetails={() => goDetails(item.id)}
-                  />
-                ))}
-              </div>
-            </section>
-          )}
+                <div className={cat === "Bebidas" ? styles.grid3 : styles.grid4}>
+                  {items.map((item) => (
+                    <FoodCard
+                      key={item.id}
+                      name={item.name}
+                      desc={item.desc}
+                      price={item.price}
+                      img={item.img}
+                      badge={item.badge}
+                      onDetails={() => goDetails(item.id)}
+                    />
+                  ))}
+                </div>
+              </section>
+            );
+          })}
         </div>
       </div>
     </div>

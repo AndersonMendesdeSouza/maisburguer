@@ -127,6 +127,44 @@
   justify-content: center;
 }
 
+@keyframes floatUpDown {
+0% {
+  transform:translateY(0) ;
+}
+50% {
+  transform:translateY(-30px) ;
+}
+100% {
+  transform:translateY(0) ;
+}
+}
+
+.whatsappFloat {
+  width: 100px;
+  height: 150px;
+  position: fixed;
+  bottom: -0px;
+  right: 10px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  animation: floatUpDown 3s ease-in-out infinite;
+}
+
+.whatsappFloat img {
+  width: 80px;
+  height: 80px;
+}
+
+.heroCenter {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-top: 30px;
+}
+
 .heroBadges {
   display: flex;
   gap: 10px;
