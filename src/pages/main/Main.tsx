@@ -2,7 +2,6 @@ import React, { useMemo, useState } from "react";
 import Colors from "../../themes/Colors";
 import styles from "./Main.module.css";
 import { FoodCard } from "../../components/food/FoodCard";
-
 import {
   PlusCircle,
   CupSoda,
@@ -63,7 +62,7 @@ const productsMock: Product[] = [
     id: 7,
     name: "Coca-Cola Lata",
     price: 6,
-    desc: "Hambúrguer artesanal 160g, cheddar, bacon crocante e molho especial.",
+    desc: "Refrigerante 350ml",
     img: "https://blog.somostera.com/hubfs/Blog_free_images/Uma%20lata%20de%20coca%20cola%20em%20cima%20da%20mesa.jpg",
     category: "Bebidas",
   },
@@ -71,7 +70,7 @@ const productsMock: Product[] = [
     id: 8,
     name: "Coca-Cola 2L",
     price: 6,
-    desc: "Hambúrguer artesanal 160g, cheddar, bacon crocante e molho especial.",
+    desc: "Garrafa 2L",
     img: "https://felicitapizzaria.chefware.com.br/67/0/0/coca-cola-2-litros.jpg",
     category: "Bebidas",
   },
@@ -79,7 +78,7 @@ const productsMock: Product[] = [
     id: 9,
     name: "Suco de Laranja",
     price: 8,
-    desc: "Hambúrguer artesanal 160g, cheddar, bacon crocante e molho especial.",
+    desc: "Natural",
     img: "https://www.sabornamesa.com.br/media/k2/items/cache/b018fd5ec8f1b90a1c8015900c2c2630_XL.jpg",
     category: "Bebidas",
   },
@@ -87,7 +86,7 @@ const productsMock: Product[] = [
     id: 10,
     name: "Batata Frita",
     price: 12,
-    desc: "Hambúrguer artesanal 160g, cheddar, bacon crocante e molho especial.",
+    desc: "Porção",
     img: "https://swiftbr.vteximg.com.br/arquivos/ids/201377-768-768/622291-batata-airfryer-extra-croc-mccain_3.jpg?v=638657204471230000",
     category: "Adicionais",
   },
@@ -104,7 +103,6 @@ export function Main() {
   const [category, setCategory] = useState<string | null>(null);
   const navigation = useNavigate();
 
-
   const categories = useMemo(() => {
     return Array.from(new Set(productsMock.map((p) => p.category))).map(
       (name) => ({
@@ -116,13 +114,14 @@ export function Main() {
 
   const groupedProducts = useMemo(() => {
     return productsMock.reduce((acc, product) => {
-      if (!acc[product.category]) {
-        acc[product.category] = [];
-      }
-      acc[product.category].push(product);
+      (acc[product.category] ||= []).push(product);
       return acc;
     }, {} as Record<string, Product[]>);
   }, []);
+
+  const goDetails = (id: number) => {
+    navigation(`/productDetails?id=${id}`);
+  };
 
   return (
     <div
@@ -150,14 +149,14 @@ export function Main() {
             </div>
 
             <div className={styles.headerRight}>
-              <button className={styles.cartBtn}>
+              <button className={styles.cartBtn} type="button">
                 <ShoppingCart size={18} />
                 R$ 42,00
               </button>
             </div>
           </div>
 
-          <button className={styles.searchBtn}>
+          <button className={styles.searchBtn} type="button">
             <Search size={18} />
             <span>Buscar</span>
           </button>
@@ -166,7 +165,14 @@ export function Main() {
         <div className={styles.containerSec}>
           <section className={styles.hero}>
             <div className={styles.heroOverlay} />
-            <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", paddingTop: 30 }}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                paddingTop: 30,
+              }}
+            >
               <div className={styles.heroContent}>
                 <div className={styles.heroBadges}>
                   <span className={styles.openBadge}>ABERTO AGORA</span>
@@ -188,22 +194,25 @@ export function Main() {
 
           <div className={styles.categoryRow}>
             <button
+              type="button"
               onClick={() => setCategory(null)}
-              className={`${styles.categoryPill} ${category === null ? styles.categoryActive : ""
-                }`}
+              className={`${styles.categoryPill} ${
+                category === null ? styles.categoryActive : ""
+              }`}
             >
               Todos
             </button>
 
             {categories.map((item) => {
               const Icon = item.icon;
-
               return (
                 <button
                   key={item.name}
+                  type="button"
                   onClick={() => setCategory(item.name)}
-                  className={`${styles.categoryPill} ${category === item.name ? styles.categoryActive : ""
-                    }`}
+                  className={`${styles.categoryPill} ${
+                    category === item.name ? styles.categoryActive : ""
+                  }`}
                 >
                   <Icon size={18} />
                   <span>{item.name}</span>
@@ -232,7 +241,15 @@ export function Main() {
 
                   <div className={cat === "Bebidas" ? styles.grid3 : styles.grid4}>
                     {items.map((item) => (
-                        <FoodCard  key={item.id} {...item} onDetails={()=> navigation("/productDetails")}/>
+                      <FoodCard
+                        key={item.id}
+                        name={item.name}
+                        desc={item.desc}
+                        price={item.price}
+                        img={item.img}
+                        badge={item.badge}
+                        onDetails={() => goDetails(item.id)}
+                      />
                     ))}
                   </div>
                 </section>
@@ -256,7 +273,15 @@ export function Main() {
 
               <div className={category === "Bebidas" ? styles.grid3 : styles.grid4}>
                 {groupedProducts[category].map((item) => (
-                  <FoodCard key={item.id} {...item} />
+                  <FoodCard
+                    key={item.id}
+                    name={item.name}
+                    desc={item.desc}
+                    price={item.price}
+                    img={item.img}
+                    badge={item.badge}
+                    onDetails={() => goDetails(item.id)}
+                  />
                 ))}
               </div>
             </section>
