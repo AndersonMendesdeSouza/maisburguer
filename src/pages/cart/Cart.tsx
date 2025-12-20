@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import styles from "./Cart.module.css";
 import Colors from "../../themes/Colors";
 import { ArrowLeft, Minus, Plus, Trash2, StickyNote, ArrowRight } from "lucide-react";
@@ -15,41 +15,37 @@ type CartItem = {
 };
 
 export default function Cart() {
-  const [items, setItems] = useState<CartItem[]>([
-    {
-      id: 1,
-      name: "Monster Burger",
-      price: 32,
-      qty: 1,
-      subtitle: "+ Bacon Extra, + Cheddar Extra",
-      note: "Ponto: Ao ponto",
-      image:
-        "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=200&q=80",
-    },
-    {
-      id: 2,
-      name: "Batata Rústica c/ Cheddar",
-      price: 18,
-      qty: 1,
-      subtitle: "Porção individual",
-      image:
-        "https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=200&q=80",
-    },
-    {
-      id: 3,
-      name: "Coca-Cola Lata",
-      price: 6,
-      qty: 2,
-      subtitle: "350ml",
-      image:
-        "https://buongiorno.vtexassets.com/arquivos/ids/195727-800-auto?v=637897942606530000&width=800&height=auto&aspect=true",
-    },
-  ]);
-
+  const [items, setItems] = useState<CartItem[]>([]);
   const navigation = useNavigate();
   const [orderObs, setOrderObs] = useState("");
-
   const deliveryFee = 5;
+
+  useEffect(() => {
+    const raw = localStorage.getItem("product");
+    if (!raw) return;
+
+    try {
+      const parsed = JSON.parse(raw);
+      const arr = Array.isArray(parsed) ? parsed : [parsed];
+
+      const normalized: CartItem[] = arr
+        .filter(Boolean)
+        .map((p: any, idx: number) => ({
+          id: Number(p.id ?? idx + 1),
+          name: String(p.name ?? p.title ?? "Item"),
+          price: Number(p.price ?? p.value ?? 0),
+          qty: Number(p.qty ?? p.quantity ?? 1),
+          note: p.note ? String(p.note) : undefined,
+          subtitle: p.subtitle ? String(p.subtitle) : undefined,
+          image: String(p.image ?? p.img ?? ""),
+        }))
+        .filter((it) => it.name && Number.isFinite(it.price) && Number.isFinite(it.qty));
+
+      setItems(normalized);
+    } catch (e) {
+      console.error("Erro lendo localStorage product:", e);
+    }
+  }, []);
 
   const subtotal = useMemo(() => {
     return items.reduce((acc, it) => acc + it.price * it.qty, 0);
@@ -57,20 +53,24 @@ export default function Cart() {
 
   const total = subtotal + (items.length ? deliveryFee : 0);
 
+  const persist = (next: CartItem[]) => {
+    setItems(next);
+    if (!next.length) localStorage.removeItem("product");
+    else localStorage.setItem("product", JSON.stringify(next));
+  };
+
   const dec = (id: number) => {
-    setItems((prev) =>
-      prev
-        .map((it) => (it.id === id ? { ...it, qty: Math.max(1, it.qty - 1) } : it))
-        .filter(Boolean)
+    persist(
+      items.map((it) => (it.id === id ? { ...it, qty: Math.max(1, it.qty - 1) } : it))
     );
   };
 
   const inc = (id: number) => {
-    setItems((prev) => prev.map((it) => (it.id === id ? { ...it, qty: it.qty + 1 } : it)));
+    persist(items.map((it) => (it.id === id ? { ...it, qty: it.qty + 1 } : it)));
   };
 
   const remove = (id: number) => {
-    setItems((prev) => prev.filter((it) => it.id !== id));
+    persist(items.filter((it) => it.id !== id));
   };
 
   const brl = (v: number) =>

@@ -216,10 +216,10 @@ export default function Checkout() {
       payment === "PIX"
         ? "Pix"
         : payment === "CARD"
-        ? "Cartão (crédito/débito)"
-        : needChange === true
-        ? `Dinheiro (troco para: ${cashChange.trim() || "-"})`
-        : "Dinheiro (sem troco)"
+          ? "Cartão (crédito/débito)"
+          : needChange === true
+            ? `Dinheiro (troco para: ${cashChange.trim() || "-"})`
+            : "Dinheiro (sem troco)"
     );
 
     const text = lines.join("\n");
@@ -362,9 +362,19 @@ export default function Checkout() {
         </div>
 
         <section className={styles.section}>
-          <div className={styles.sectionTitle}>
-            <ShoppingCart size={16} />
-            <span>Resumo</span>
+          <div className={styles.sectionHead}>
+            <div className={styles.sectionTitle}>
+              <ShoppingCart size={16} />
+              <span>Resumo</span>
+            </div>
+
+            <button
+              type="button"
+              className={styles.editOrderBtn}
+              onClick={() => nav("/cart")}
+            >
+              Editar pedido
+            </button>
           </div>
 
           <div className={styles.summaryList}>
@@ -396,9 +406,11 @@ export default function Checkout() {
           {savedAddresses.length === 0 ? (
             <div className={styles.emptyAddressCard}>
               <div className={styles.emptyAddressTitle}>Nenhum endereço salvo ainda</div>
-              <div className={styles.emptyAddressDesc}>Finalize um pedido para salvar seu endereço aqui.</div>
+              <div className={styles.emptyAddressDesc}>
+                Finalize um pedido para salvar seu endereço aqui.
+              </div>
               <button type="button" className={styles.useNewBtn} onClick={handleUseNewAddress}>
-                {savedAddresses.length === 0 ? "Adiçionar endereço" : " Usar novo endereço"}
+                Adicionar endereço
               </button>
             </div>
           ) : (
@@ -432,7 +444,9 @@ export default function Checkout() {
                       <span>{a.district}</span>
                       <span className={styles.addressCep}>{a.cep}</span>
                     </div>
-                    {a.complement ? <div className={styles.addressComp}>{a.complement}</div> : null}
+                    {a.complement ? (
+                      <div className={styles.addressComp}>{a.complement}</div>
+                    ) : null}
                   </button>
                 );
               })}
@@ -611,7 +625,9 @@ export default function Checkout() {
                 <div className={styles.payList}>
                   <button
                     type="button"
-                    className={`${styles.payItem} ${needChange === true ? styles.payItemActive : ""}`}
+                    className={`${styles.payItem} ${
+                      needChange === true ? styles.payItemActive : ""
+                    }`}
                     onClick={() => setNeedChange(true)}
                   >
                     <div className={styles.payLeft}>
@@ -623,12 +639,18 @@ export default function Checkout() {
                         <div className={styles.payDesc}>Vou precisar de troco</div>
                       </div>
                     </div>
-                    <div className={`${styles.radio} ${needChange === true ? styles.radioOn : ""}`} />
+                    <div
+                      className={`${styles.radio} ${
+                        needChange === true ? styles.radioOn : ""
+                      }`}
+                    />
                   </button>
 
                   <button
                     type="button"
-                    className={`${styles.payItem} ${needChange === false ? styles.payItemActive : ""}`}
+                    className={`${styles.payItem} ${
+                      needChange === false ? styles.payItemActive : ""
+                    }`}
                     onClick={() => {
                       setNeedChange(false);
                       setCashChange("");
@@ -643,7 +665,11 @@ export default function Checkout() {
                         <div className={styles.payDesc}>Sem troco</div>
                       </div>
                     </div>
-                    <div className={`${styles.radio} ${needChange === false ? styles.radioOn : ""}`} />
+                    <div
+                      className={`${styles.radio} ${
+                        needChange === false ? styles.radioOn : ""
+                      }`}
+                    />
                   </button>
                 </div>
 

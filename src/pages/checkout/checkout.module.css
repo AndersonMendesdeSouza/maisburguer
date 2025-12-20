@@ -117,6 +117,34 @@
   margin-bottom: 10px;
 }
 
+.sectionHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.editOrderBtn {
+  height: 34px;
+  padding: 0 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  background: rgba(239, 14, 14, 0.95);
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 12px;
+  font-weight: 900;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+.editOrderBtn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
 .summaryList {
   display: flex;
   flex-direction: column;
