@@ -110,7 +110,6 @@ export default function Checkout() {
       ? state.total
       : subtotal + (items.length ? deliveryFee : 0);
   const orderObs = state.orderObs || "";
-
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
   const [cep, setCep] = useState("");
@@ -120,6 +119,7 @@ export default function Checkout() {
   const [complement, setComplement] = useState("");
   const [payment, setPayment] = useState<PaymentType>("PIX");
   const [cashChange, setCashChange] = useState("");
+  const [needChange, setNeedChange] = useState<boolean | null>(null);
 
   const [savedAddresses, setSavedAddresses] = useState<SavedAddress[]>([]);
   const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
@@ -134,8 +134,15 @@ export default function Checkout() {
     try {
       const sel = localStorage.getItem(LS_SELECTED_KEY);
       if (sel) setSelectedAddressId(sel);
-    } catch { }
+    } catch {}
   }, []);
+
+  useEffect(() => {
+    if (payment !== "CASH") {
+      setNeedChange(null);
+      setCashChange("");
+    }
+  }, [payment]);
 
   const selectedAddress = useMemo(() => {
     if (!selectedAddressId) return null;
@@ -160,7 +167,9 @@ export default function Checkout() {
     numberValue.trim().length > 0 &&
     districtValue.trim().length > 0;
 
-  const step3Done = payment !== "CASH" || cashChange.trim().length > 0;
+  const step3Done =
+    payment !== "CASH" ||
+    (needChange === false || (needChange === true && cashChange.trim().length > 0));
 
   const canSend = items.length > 0 && step1Done && step2Done && step3Done;
 
@@ -198,7 +207,8 @@ export default function Checkout() {
     lines.push(`CEP: ${cepValue || "-"}`);
     lines.push(`Rua: ${streetValue || "-"}, Nº: ${numberValue || "-"}`);
     lines.push(`Bairro: ${districtValue || "-"}`);
-    if (String(complementValue || "").trim()) lines.push(`Compl.: ${String(complementValue).trim()}`);
+    if (String(complementValue || "").trim())
+      lines.push(`Compl.: ${String(complementValue).trim()}`);
 
     lines.push("");
     lines.push("*Pagamento*");
@@ -206,8 +216,10 @@ export default function Checkout() {
       payment === "PIX"
         ? "Pix"
         : payment === "CARD"
-          ? "Cartão (crédito/débito)"
-          : `Dinheiro${cashChange.trim() ? ` (troco para: ${cashChange.trim()})` : ""}`
+        ? "Cartão (crédito/débito)"
+        : needChange === true
+        ? `Dinheiro (troco para: ${cashChange.trim() || "-"})`
+        : "Dinheiro (sem troco)"
     );
 
     const text = lines.join("\n");
@@ -227,6 +239,7 @@ export default function Checkout() {
     complementValue,
     payment,
     cashChange,
+    needChange,
   ]);
 
   function persistAddressAfterSend() {
@@ -251,15 +264,16 @@ export default function Checkout() {
       a.street.trim().toLowerCase() === newAddr.street.trim().toLowerCase() &&
       a.number.trim().toLowerCase() === newAddr.number.trim().toLowerCase() &&
       a.district.trim().toLowerCase() === newAddr.district.trim().toLowerCase() &&
-      (a.complement || "").trim().toLowerCase() === (newAddr.complement || "").trim().toLowerCase();
+      (a.complement || "").trim().toLowerCase() ===
+        (newAddr.complement || "").trim().toLowerCase();
 
     const existing = savedAddresses.find(same);
     const next = existing
       ? savedAddresses.map((a) =>
-        a.id === existing.id
-          ? { ...a, ...newAddr, id: existing.id, createdAt: Date.now() }
-          : a
-      )
+          a.id === existing.id
+            ? { ...a, ...newAddr, id: existing.id, createdAt: Date.now() }
+            : a
+        )
       : [newAddr, ...savedAddresses];
 
     saveLSAddresses(next);
@@ -594,17 +608,58 @@ export default function Checkout() {
 
             {payment === "CASH" ? (
               <div className={styles.cashBox}>
-                <label className={styles.field}>
-                  <span className={styles.label}>Troco para</span>
-                  <input
-                    className={styles.input}
-                    value={cashChange}
-                    onChange={(e) => setCashChange(maskMoneyBR(e.target.value))}
-                    placeholder="Ex: 50,00"
-                    inputMode="decimal"
-                    autoComplete="off"
-                  />
-                </label>
+                <div className={styles.payList}>
+                  <button
+                    type="button"
+                    className={`${styles.payItem} ${needChange === true ? styles.payItemActive : ""}`}
+                    onClick={() => setNeedChange(true)}
+                  >
+                    <div className={styles.payLeft}>
+                      <div className={styles.payIcon}>
+                        <Check size={16} />
+                      </div>
+                      <div className={styles.payTexts}>
+                        <div className={styles.payName}>Sim</div>
+                        <div className={styles.payDesc}>Vou precisar de troco</div>
+                      </div>
+                    </div>
+                    <div className={`${styles.radio} ${needChange === true ? styles.radioOn : ""}`} />
+                  </button>
+
+                  <button
+                    type="button"
+                    className={`${styles.payItem} ${needChange === false ? styles.payItemActive : ""}`}
+                    onClick={() => {
+                      setNeedChange(false);
+                      setCashChange("");
+                    }}
+                  >
+                    <div className={styles.payLeft}>
+                      <div className={styles.payIcon}>
+                        <Check size={16} />
+                      </div>
+                      <div className={styles.payTexts}>
+                        <div className={styles.payName}>Não</div>
+                        <div className={styles.payDesc}>Sem troco</div>
+                      </div>
+                    </div>
+                    <div className={`${styles.radio} ${needChange === false ? styles.radioOn : ""}`} />
+                  </button>
+                </div>
+
+                {needChange === true ? (
+                  <label className={styles.field} style={{ marginTop: 10 }}>
+                    <span className={styles.label}>Troco para</span>
+                    <input
+                      className={styles.input}
+                      value={cashChange}
+                      onChange={(e) => setCashChange(maskMoneyBR(e.target.value))}
+                      placeholder="Ex: 50,00"
+                      inputMode="decimal"
+                      autoComplete="off"
+                    />
+                  </label>
+                ) : null}
               </div>
             ) : null}
           </div>
@@ -625,7 +680,7 @@ export default function Checkout() {
           disabled={!canSend}
           onClick={() => {
             if (!canSend) {
-              alert("Adicione um endereço")
+              alert("Adicione um endereço");
             } else {
               persistAddressAfterSend();
               window.open(waLink, "_blank", "noopener,noreferrer");
