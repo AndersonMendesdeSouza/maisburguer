@@ -21,6 +21,14 @@ function formatMoney(value?: number) {
   });
 }
 
+function makeMergeKey(item: any) {
+  if (item?.id !== undefined && item?.id !== null && String(item.id).trim() !== "") {
+    return `id:${String(item.id)}`;
+  }
+  const name = String(item?.name ?? "").trim().toLowerCase();
+  return `name:${name || "unknown"}`;
+}
+
 export function addCart(item: any) {
   const raw = localStorage.getItem("product");
   let arr: any[] = [];
@@ -34,20 +42,43 @@ export function addCart(item: any) {
     }
   }
 
-  const id = Number(item.id ?? Date.now());
-  const idx = arr.findIndex((p) => Number(p?.id) === id);
+  const qtyToAddRaw = Number(item?.qty ?? 1);
+  const qtyToAdd = Number.isFinite(qtyToAddRaw) && qtyToAddRaw > 0 ? qtyToAddRaw : 1;
+
+  const mergeKey = makeMergeKey(item);
+  const idx = arr.findIndex((p) => makeMergeKey(p) === mergeKey);
 
   if (idx >= 0) {
     const prevQty = Number(arr[idx]?.qty ?? arr[idx]?.quantity ?? 1);
-    arr[idx] = { ...arr[idx], ...item, id, qty: prevQty + 1 };
+    arr[idx] = {
+      ...arr[idx],
+      ...item,
+      qty: prevQty + qtyToAdd,
+      image: String(item?.image ?? item?.img ?? arr[idx]?.image ?? arr[idx]?.img ?? ""),
+      img: String(item?.img ?? item?.image ?? arr[idx]?.img ?? arr[idx]?.image ?? ""),
+    };
   } else {
-    arr.push({ ...item, id, qty: Number(item.qty ?? 1) });
+    arr.push({
+      ...item,
+      qty: qtyToAdd,
+      image: String(item?.image ?? item?.img ?? ""),
+      img: String(item?.img ?? item?.image ?? ""),
+    });
   }
 
   localStorage.setItem("product", JSON.stringify(arr));
 }
 
-export function FoodCard({ id, name, functions, desc, price, img, badge, onDetails }: FoodCardProps) {
+export function FoodCard({
+  id,
+  name,
+  functions,
+  desc,
+  price,
+  img,
+  badge,
+  onDetails,
+}: FoodCardProps) {
   const priceMin = price !== undefined ? price + 7 : undefined;
 
   const item = {
@@ -56,6 +87,8 @@ export function FoodCard({ id, name, functions, desc, price, img, badge, onDetai
     price,
     img,
     badge,
+    qty: 1,
+    image: img,
   };
 
   return (
@@ -69,8 +102,8 @@ export function FoodCard({ id, name, functions, desc, price, img, badge, onDetai
           onClick={(e) => {
             e.stopPropagation();
             addCart(item);
-            toast.success('Produto adicionado ao carrinho', { autoClose: 1500 })
-            functions?.()
+            toast.success("Produto adicionado ao carrinho", { autoClose: 1500 });
+            functions?.();
           }}
           className={styles.addBtn}
           aria-label="Adicionar ao carrinho"

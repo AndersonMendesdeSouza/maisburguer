@@ -1,11 +1,9 @@
-// src/pages/ProductDetails/ProductDetails.tsx
 import { useMemo, useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import styles from "./Productdetails.module.css";
 import { Share2, Minus, Plus, Check, ArrowLeft, ShoppingCart } from "lucide-react";
 import { addCart, FoodCard } from "../../components/food/FoodCard";
 import type { ProductResponseDto } from "../../dtos/Product-Response.Dto";
-import { sendOrderToWhatsApp } from "../../utils/sendOrderToWhatsApp";
 import { toast, ToastContainer } from "react-toastify";
 
 type Addon = {
@@ -25,9 +23,7 @@ export default function ProductDetails() {
   const [note, setNote] = useState("");
   const [cartActived, setCartActivedCart] = useState(false);
   const [products, setProducts] = useState<ProductResponseDto | null>(null);
-  const [selectedAddons, setSelectedAddons] = useState<Record<string, boolean>>(
-    {}
-  );
+  const [selectedAddons, setSelectedAddons] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     const item = (location.state as { item?: ProductResponseDto } | null)?.item;
@@ -43,18 +39,8 @@ export default function ProductDetails() {
 
   const addons: Addon[] = [
     { id: "bacon", name: "Bacon Extra", desc: "Fatia extra crocante", price: 4 },
-    {
-      id: "cheddar",
-      name: "Queijo Cheddar",
-      desc: "Extra cremosidade",
-      price: 3,
-    },
-    {
-      id: "maionese",
-      name: "Maionese Verde",
-      desc: "Maionese da casa",
-      price: 2,
-    },
+    { id: "cheddar", name: "Queijo Cheddar", desc: "Extra cremosidade", price: 3 },
+    { id: "maionese", name: "Maionese Verde", desc: "Maionese da casa", price: 2 },
     { id: "ovo", name: "Ovo Frito", desc: "Gema mole", price: 2.6 },
   ];
 
@@ -131,17 +117,41 @@ export default function ProductDetails() {
     navigation(`/productDetails?id=${item.id}`, { state: { item } });
   };
 
-  const addonsTotal = useMemo(
-    () =>
-      addons.reduce((acc, a) => acc + (selectedAddons[a.id] ? a.price : 0), 0),
-    [selectedAddons]
-  );
-
-  const total = ((products?.price ?? 0) + addonsTotal) * qty;
-
   const toggleAddon = (id: string) => {
     setSelectedAddons((prev) => ({ ...prev, [id]: !prev[id] }));
   };
+
+  const selectedAddonList = useMemo(() => {
+    return addons.filter((a) => selectedAddons[a.id]).map((a) => ({ id: a.id, name: a.name, price: a.price }));
+  }, [selectedAddons]);
+
+  const addonsTotal = useMemo(() => {
+    return selectedAddonList.reduce((acc, a) => acc + a.price, 0);
+  }, [selectedAddonList]);
+
+  const total = useMemo(() => {
+    const base = products?.price ?? 0;
+    return (base + addonsTotal) * qty;
+  }, [products?.price, addonsTotal, qty]);
+
+  const cartItem = useMemo(() => {
+    if (!products) return null;
+
+    const basePrice = products.price ?? 0;
+    const unitPrice = basePrice + addonsTotal;
+
+    return {
+      ...products,
+      id: products.id,
+      price: unitPrice,
+      qty,
+      note: note.trim() || undefined,
+      addons: selectedAddonList,
+      unitPrice,
+      totalPrice: unitPrice * qty,
+      subtitle: selectedAddonList.length ? selectedAddonList.map((a) => `+ ${a.name}`).join(", ") : undefined,
+    };
+  }, [products, qty, note, selectedAddonList, addonsTotal]);
 
   if (!products) return null;
 
@@ -151,16 +161,14 @@ export default function ProductDetails() {
       setCartActivedCart(false);
     }, 7000);
   }
+
   return (
     <div className={styles.page}>
       <ToastContainer position="top-center" />
+
       {cartActived && (
         <div className={styles.cartFloat}>
-          <button
-            className={styles.headerCartActived}
-            type="button"
-            onClick={() => navigation("/cart")}
-          >
+          <button className={styles.headerCartActived} type="button" onClick={() => navigation("/cart")}>
             <ShoppingCart size={20} />
           </button>
         </div>
@@ -168,26 +176,13 @@ export default function ProductDetails() {
 
       <div className={styles.top}>
         <div className={styles.media}>
-          <img
-            className={styles.mediaImg}
-            src={products.img}
-            alt={products.name}
-          />
+          <img className={styles.mediaImg} src={products.img} alt={products.name} />
 
-          <button
-            type="button"
-            className={styles.backBtn}
-            aria-label="Voltar"
-            onClick={() => navigation(-1)}
-          >
+          <button type="button" className={styles.backBtn} aria-label="Voltar" onClick={() => navigation(-1)}>
             <ArrowLeft size={18} />
           </button>
 
-          <button
-            type="button"
-            className={styles.shareBtn}
-            aria-label="Compartilhar"
-          >
+          <button type="button" className={styles.shareBtn} aria-label="Compartilhar">
             <Share2 size={18} />
           </button>
         </div>
@@ -198,9 +193,7 @@ export default function ProductDetails() {
 
             <div className={styles.priceRow}>
               <span className={styles.price}>{BRL(products.price)}</span>
-              {products.badge ? (
-                <span className={styles.badge}>{products.badge}</span>
-              ) : null}
+              {products.badge ? <span className={styles.badge}>{products.badge}</span> : null}
             </div>
 
             <p className={styles.desc}>{products.desc}</p>
@@ -215,19 +208,16 @@ export default function ProductDetails() {
             <div className={styles.addons}>
               {addons.map((a) => {
                 const active = !!selectedAddons[a.id];
+
                 return (
                   <button
                     key={a.id}
                     type="button"
-                    className={`${styles.addonRow} ${active ? styles.addonActive : ""
-                      }`}
+                    className={`${styles.addonRow} ${active ? styles.addonActive : ""}`}
                     onClick={() => toggleAddon(a.id)}
                   >
                     <span className={styles.toggle}>
-                      <span
-                        className={`${styles.toggleKnob} ${active ? styles.toggleOn : ""
-                          }`}
-                      >
+                      <span className={`${styles.toggleKnob} ${active ? styles.toggleOn : ""}`}>
                         {active ? <Check size={14} /> : null}
                       </span>
                     </span>
@@ -286,9 +276,12 @@ export default function ProductDetails() {
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
-                addCart(products);
-                toast.success('Produto adicionado ao carrinho Ver carrinho', { autoClose: 151110 })
-                activedCart()
+                if (!cartItem) return;
+
+                addCart(cartItem);
+
+                toast.success("Produto adicionado ao carrinho", { autoClose: 2000 });
+                activedCart();
               }}
             >
               <span>Adicionar</span>
@@ -298,15 +291,13 @@ export default function ProductDetails() {
             <button
               className={styles.finilyBtn}
               type="button"
-              onClick={() =>
-                sendOrderToWhatsApp([
-                  {
-                    name: products.name,
-                    quantity: qty,
-                    price: products.price + addonsTotal,
-                  },
-                ])
-              }
+              onClick={(e) => {
+                e.stopPropagation();
+                if (!cartItem) return;
+
+                addCart(cartItem);
+                navigation("/cart");
+              }}
             >
               <span>Pedir</span>
               <span className={styles.addBtnPrice}>{BRL(total)}</span>
@@ -322,6 +313,7 @@ export default function ProductDetails() {
           {complements.map((c) => (
             <div key={c.id} className={styles.compItem}>
               <FoodCard
+                id={c.id}
                 img={c.img}
                 name={c.name}
                 desc={c.desc}

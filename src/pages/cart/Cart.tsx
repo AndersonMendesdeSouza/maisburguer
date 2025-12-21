@@ -5,7 +5,7 @@ import { ArrowLeft, Minus, Plus, Trash2, StickyNote, ArrowRight } from "lucide-r
 import { useNavigate } from "react-router-dom";
 
 type CartItem = {
-  id: number;
+  id: number; // pode ser 0 quando não vier id, mas tudo vai juntar pelo nome
   name: string;
   price: number;
   qty: number;
@@ -14,12 +14,20 @@ type CartItem = {
   image: string;
 };
 
+function makeMergeKey(p: any) {
+  const id = Number(p?.id);
+  if (Number.isFinite(id) && id > 0) return `id:${id}`;
+  const name = String(p?.name ?? "").trim().toLowerCase();
+  return `name:${name || "unknown"}`;
+}
+
 export default function Cart() {
   const [items, setItems] = useState<CartItem[]>([]);
   const navigation = useNavigate();
   const [orderObs, setOrderObs] = useState("");
   const deliveryFee = 5;
 
+  // 🔥 ÚNICO LUGAR ONDE OS ITENS SÃO CONSOLIDADOS
   useEffect(() => {
     const raw = localStorage.getItem("product");
     if (!raw) return;
@@ -28,20 +36,46 @@ export default function Cart() {
       const parsed = JSON.parse(raw);
       const arr = Array.isArray(parsed) ? parsed : [parsed];
 
-      const normalized: CartItem[] = arr
-        .filter(Boolean)
-        .map((p: any, idx: number) => ({
-          id: Number(p.id ?? idx + 1),
-          name: String(p.name ?? p.title ?? "Item"),
-          price: Number(p.price ?? p.value ?? 0),
-          qty: Number(p.qty ?? p.quantity ?? 1),
-          note: p.note ? String(p.note) : undefined,
-          subtitle: p.subtitle ? String(p.subtitle) : undefined,
-          image: String(p.image ?? p.img ?? ""),
-        }))
-        .filter((it) => it.name && Number.isFinite(it.price) && Number.isFinite(it.qty));
+      const mergedMap: Record<string, CartItem> = {};
 
-      setItems(normalized);
+      for (const p of arr) {
+        if (!p) continue;
+
+        const key = makeMergeKey(p);
+        const idNum = Number(p?.id);
+        const safeId = Number.isFinite(idNum) && idNum > 0 ? idNum : 0;
+
+        const qty = Number(p?.qty ?? 1);
+        const safeQty = Number.isFinite(qty) && qty > 0 ? qty : 1;
+
+        const name = String(p?.name ?? "Item");
+        const price = Number(p?.price ?? 0);
+        const image = String(p?.image ?? p?.img ?? "");
+
+        if (!mergedMap[key]) {
+          mergedMap[key] = {
+            id: safeId,
+            name,
+            price,
+            qty: safeQty,
+            note: p.note ? String(p.note) : undefined,
+            subtitle: p.subtitle ? String(p.subtitle) : undefined,
+            image,
+          };
+        } else {
+          mergedMap[key].qty += safeQty;
+
+          // mantém dados “bons” caso venha faltando em um deles
+          if (!mergedMap[key].image && image) mergedMap[key].image = image;
+          if (!mergedMap[key].subtitle && p.subtitle) mergedMap[key].subtitle = String(p.subtitle);
+          if (!mergedMap[key].note && p.note) mergedMap[key].note = String(p.note);
+        }
+      }
+
+      const merged = Object.values(mergedMap);
+
+      setItems(merged);
+      localStorage.setItem("product", JSON.stringify(merged));
     } catch (e) {
       console.error("Erro lendo localStorage product:", e);
     }
@@ -59,18 +93,30 @@ export default function Cart() {
     else localStorage.setItem("product", JSON.stringify(next));
   };
 
-  const dec = (id: number) => {
+  // Para dec/inc/remove funcionar mesmo quando id=0 (sem id), usamos a chave pelo name também
+  const getKeyFromItem = (it: CartItem) => {
+    const id = Number(it.id);
+    if (Number.isFinite(id) && id > 0) return `id:${id}`;
+    return `name:${String(it.name ?? "").trim().toLowerCase()}`;
+  };
+
+  const dec = (target: CartItem) => {
+    const key = getKeyFromItem(target);
     persist(
-      items.map((it) => (it.id === id ? { ...it, qty: Math.max(1, it.qty - 1) } : it))
+      items.map((it) =>
+        getKeyFromItem(it) === key ? { ...it, qty: Math.max(1, it.qty - 1) } : it
+      )
     );
   };
 
-  const inc = (id: number) => {
-    persist(items.map((it) => (it.id === id ? { ...it, qty: it.qty + 1 } : it)));
+  const inc = (target: CartItem) => {
+    const key = getKeyFromItem(target);
+    persist(items.map((it) => (getKeyFromItem(it) === key ? { ...it, qty: it.qty + 1 } : it)));
   };
 
-  const remove = (id: number) => {
-    persist(items.filter((it) => it.id !== id));
+  const remove = (target: CartItem) => {
+    const key = getKeyFromItem(target);
+    persist(items.filter((it) => getKeyFromItem(it) !== key));
   };
 
   const brl = (v: number) =>
@@ -92,7 +138,11 @@ export default function Cart() {
       >
         <div className={styles.content}>
           <header className={styles.header}>
-            <button className={styles.iconBtn} aria-label="Voltar" onClick={() => window.history.back()}>
+            <button
+              className={styles.iconBtn}
+              aria-label="Voltar"
+              onClick={() => window.history.back()}
+            >
               <ArrowLeft size={20} />
             </button>
 
@@ -104,64 +154,51 @@ export default function Cart() {
           </header>
 
           <div className={styles.list}>
-            {items.length > 0 ? items.map((it) => (
-              <div key={it.id} className={styles.card}>
-                <div className={styles.thumbWrap}>
-                  <img className={styles.thumb} src={it.image} alt={it.name} />
-                </div>
-
-                <div className={styles.cardInfo}>
-                  <div className={styles.nameRow}>
-                    <div className={styles.nameCol}>
-                      <div className={styles.itemName}>{it.name}</div>
-                      <div className={styles.itemPrice}>{brl(it.price)}</div>
-                    </div>
-
-                    <div className={styles.qtyArea}>
-                      <div className={styles.qtyBox}>
-                        <button
-                          className={styles.qtyBtn}
-                          aria-label="Diminuir"
-                          onClick={() => dec(it.id)}
-                        >
-                          <Minus size={16} />
-                        </button>
-
-                        <div className={styles.qtyValue}>{it.qty}</div>
-
-                        <button
-                          className={`${styles.qtyBtn} ${styles.qtyBtnPlus}`}
-                          aria-label="Aumentar"
-                          onClick={() => inc(it.id)}
-                        >
-                          <Plus size={16} />
-                        </button>
-                      </div>
-
-                      <button
-                        className={styles.trashBtn}
-                        aria-label="Remover item"
-                        onClick={() => remove(it.id)}
-                      >
-                        <Trash2 size={18} />
-                      </button>
-                    </div>
+            {items.length > 0 ? (
+              items.map((it) => (
+                <div key={getKeyFromItem(it)} className={styles.card}>
+                  <div className={styles.thumbWrap}>
+                    <img className={styles.thumb} src={it.image} alt={it.name} />
                   </div>
 
-                  {it.subtitle ? <div className={styles.subLine}>{it.subtitle}</div> : null}
-                  {it.note ? <div className={styles.noteLine}>{it.note}</div> : null}
-                </div>
-              </div>
-            )
+                  <div className={styles.cardInfo}>
+                    <div className={styles.nameRow}>
+                      <div className={styles.nameCol}>
+                        <div className={styles.itemName}>{it.name}</div>
+                        <div className={styles.itemPrice}>{brl(it.price)}</div>
+                      </div>
 
+                      <div className={styles.qtyArea}>
+                        <div className={styles.qtyBox}>
+                          <button className={styles.qtyBtn} onClick={() => dec(it)}>
+                            <Minus size={16} />
+                          </button>
+
+                          <div className={styles.qtyValue}>{it.qty}</div>
+
+                          <button
+                            className={`${styles.qtyBtn} ${styles.qtyBtnPlus}`}
+                            onClick={() => inc(it)}
+                          >
+                            <Plus size={16} />
+                          </button>
+                        </div>
+
+                        <button className={styles.trashBtn} onClick={() => remove(it)}>
+                          <Trash2 size={18} />
+                        </button>
+                      </div>
+                    </div>
+
+                    {it.subtitle && <div className={styles.subLine}>{it.subtitle}</div>}
+                    {it.note && <div className={styles.noteLine}>{it.note}</div>}
+                  </div>
+                </div>
+              ))
             ) : (
               <div className={styles.emptyState}>
                 <h3>Você ainda não possui pedidos</h3>
-
-                <button
-                  className={styles.emptyButton}
-                  onClick={() => navigation("/")}
-                >
+                <button className={styles.emptyButton} onClick={() => navigation("/")}>
                   Fazer pedido
                 </button>
               </div>
@@ -178,53 +215,42 @@ export default function Cart() {
               className={styles.textarea}
               value={orderObs}
               onChange={(e) => setOrderObs(e.target.value)}
-              placeholder="Ex: Tirar a cebola, maionese à parte, caprichar no molho..."
             />
           </section>
 
           <section className={styles.summary}>
             <div className={styles.sumRow}>
-              <span className={styles.sumLabel}>Subtotal</span>
-              <span className={styles.sumValue}>{brl(subtotal)}</span>
+              <span>Subtotal</span>
+              <span>{brl(subtotal)}</span>
             </div>
 
             <div className={styles.sumRow}>
-              <span className={styles.sumLabel}>Taxa de entrega</span>
-              <span className={styles.sumValue}>{items.length ? brl(deliveryFee) : brl(0)}</span>
+              <span>Taxa de entrega</span>
+              <span>{items.length ? brl(deliveryFee) : brl(0)}</span>
             </div>
 
             <div className={styles.divider} />
 
             <div className={styles.totalRow}>
-              <span className={styles.totalLabel}>Total</span>
-              <span className={styles.totalValue}>{brl(total)}</span>
+              <span>Total</span>
+              <span>{brl(total)}</span>
             </div>
           </section>
-
-          <div className={styles.bottomSpacer} />
         </div>
 
         <div className={styles.bottomBar}>
           <button
             className={styles.checkoutBtn}
-            type="button"
             disabled={items.length === 0}
             onClick={() =>
               navigation("/checkout", {
-                state: {
-                  items,
-                  orderObs,
-                  deliveryFee,
-                  subtotal,
-                  total,
-                },
+                state: { items, orderObs, deliveryFee, subtotal, total },
               })
             }
           >
-            <span className={styles.checkoutText}>Finalizar Pedido</span>
-            <span className={styles.checkoutRight}>
-              <span className={styles.checkoutTotal}>{brl(total)}</span>
-              <ArrowRight size={18} />
+            <span>Finalizar Pedido</span>
+            <span>
+              {brl(total)} <ArrowRight size={18} />
             </span>
           </button>
         </div>
