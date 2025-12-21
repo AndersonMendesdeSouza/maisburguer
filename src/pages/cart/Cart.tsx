@@ -5,7 +5,7 @@ import { ArrowLeft, Minus, Plus, Trash2, StickyNote, ArrowRight } from "lucide-r
 import { useNavigate } from "react-router-dom";
 
 type CartItem = {
-  id: number; // pode ser 0 quando não vier id, mas tudo vai juntar pelo nome
+  id: number;
   name: string;
   price: number;
   qty: number;
@@ -27,9 +27,8 @@ export default function Cart() {
   const [orderObs, setOrderObs] = useState("");
   const deliveryFee = 5;
 
-  // 🔥 ÚNICO LUGAR ONDE OS ITENS SÃO CONSOLIDADOS
   useEffect(() => {
-    const raw = localStorage.getItem("product");
+    const raw = localStorage.getItem("food");
     if (!raw) return;
 
     try {
@@ -65,7 +64,6 @@ export default function Cart() {
         } else {
           mergedMap[key].qty += safeQty;
 
-          // mantém dados “bons” caso venha faltando em um deles
           if (!mergedMap[key].image && image) mergedMap[key].image = image;
           if (!mergedMap[key].subtitle && p.subtitle) mergedMap[key].subtitle = String(p.subtitle);
           if (!mergedMap[key].note && p.note) mergedMap[key].note = String(p.note);
@@ -75,7 +73,7 @@ export default function Cart() {
       const merged = Object.values(mergedMap);
 
       setItems(merged);
-      localStorage.setItem("product", JSON.stringify(merged));
+      localStorage.setItem("food", JSON.stringify(merged));
     } catch (e) {
       console.error("Erro lendo localStorage product:", e);
     }
@@ -89,11 +87,10 @@ export default function Cart() {
 
   const persist = (next: CartItem[]) => {
     setItems(next);
-    if (!next.length) localStorage.removeItem("product");
-    else localStorage.setItem("product", JSON.stringify(next));
+    if (!next.length) localStorage.removeItem("food");
+    else localStorage.setItem("food", JSON.stringify(next));
   };
 
-  // Para dec/inc/remove funcionar mesmo quando id=0 (sem id), usamos a chave pelo name também
   const getKeyFromItem = (it: CartItem) => {
     const id = Number(it.id);
     if (Number.isFinite(id) && id > 0) return `id:${id}`;
@@ -143,7 +140,7 @@ export default function Cart() {
               aria-label="Voltar"
               onClick={() => window.history.back()}
             >
-              <ArrowLeft size={20} />
+              <ArrowLeft size={20} color={Colors.Texts.primary} />
             </button>
 
             <h1 className={styles.title}>Seu Pedido</h1>

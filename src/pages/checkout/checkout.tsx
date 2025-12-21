@@ -706,7 +706,7 @@ export default function Checkout() {
             } else {
               persistAddressAfterSend();
               window.open(waLink, "_blank", "noopener,noreferrer");
-              localStorage.removeItem("product");
+              localStorage.removeItem("food");
             }
           }}
         >

@@ -1,6 +1,7 @@
 import { Plus } from "lucide-react";
 import styles from "./FoodCard.module.css";
 import { toast } from "react-toastify";
+import Colors from "../../themes/Colors";
 
 type FoodCardProps = {
   id?: number;
@@ -30,7 +31,7 @@ function makeMergeKey(item: any) {
 }
 
 export function addCart(item: any) {
-  const raw = localStorage.getItem("product");
+  const raw = localStorage.getItem("food");
   let arr: any[] = [];
 
   if (raw) {
@@ -66,7 +67,7 @@ export function addCart(item: any) {
     });
   }
 
-  localStorage.setItem("product", JSON.stringify(arr));
+  localStorage.setItem("food", JSON.stringify(arr));
 }
 
 export function FoodCard({
@@ -92,7 +93,18 @@ export function FoodCard({
   };
 
   return (
-    <article className={styles.card}>
+    <article
+      onClick={onDetails}
+      className={styles.card}
+      style={
+        {
+          ["--bestSellerBg" as any]: Colors.Status.bestSellerBg,
+          ["--bestSellerBorder" as any]: Colors.Status.bestSellerBorder,
+          ["--bestSellerText" as any]: Colors.Status.bestSellerText,
+          ["--bestSellerGlow" as any]: Colors.Status.bestSellerGlow,
+        } as React.CSSProperties
+      }
+    >
       {!!badge && <div className={styles.badge}>{badge}</div>}
 
       <div className={styles.imgWrap}>
@@ -108,7 +120,7 @@ export function FoodCard({
           className={styles.addBtn}
           aria-label="Adicionar ao carrinho"
         >
-          <Plus size={22} color="#ffffffff" />
+          <Plus size={22} />
         </button>
       </div>
 

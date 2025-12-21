@@ -1,16 +1,16 @@
 import { Routes, Route } from 'react-router-dom'
-import { Main } from './pages/main/Main'
-import { FoodDetails } from './pages/FoodDetails'
-import ProductDetails from './pages/product/Productdetails'
-import Cart from './pages/cart/Cart'
-import Checkout from './pages/checkout/checkout'
+import { Main } from './pages/Main/Main'
+import Checkout from './pages/Checkout/Checkout'
+import Cart from './pages/Cart/Cart'
+import FoodDetails from './pages/Food/FoodDetails'
+
 
 function App() {
   return (
     <Routes>
       <Route path="/" element={<Main />} />
       <Route path="/sobre" element={<FoodDetails />} />
-      <Route path="/productDetails" element={<ProductDetails />} />
+      <Route path="/foodDetails" element={<FoodDetails />} />
       <Route path="/cart" element={<Cart />} />
       <Route path="/checkout" element={<Checkout />} />
     </Routes>
