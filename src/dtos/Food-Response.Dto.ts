@@ -1,4 +1,4 @@
-export interface ProductResponseDto {
+export interface FoodResponseDto {
   id: number;
   name: string;
   desc?: string;

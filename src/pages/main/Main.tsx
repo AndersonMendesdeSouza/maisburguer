@@ -14,11 +14,11 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import whatsapp from "../../assets/whatsapp.png";
-import { MainSkeleton } from "../../components/skeleton/main/MainSkeleton";
-import type { ProductResponseDto } from "../../dtos/Product-Response.Dto";
+import { MainSkeleton } from "../../components/skeletons/main/MainSkeleton";
+import type { FoodResponseDto } from "../../dtos/Food-Response.Dto";
 import { ToastContainer } from "react-toastify";
 
-const productsMock: ProductResponseDto[] = [
+const productsMock: FoodResponseDto[] = [
   {
     id: 1,
     name: "Monster Bacon",
@@ -152,11 +152,11 @@ export function Main() {
     return filteredProducts.reduce((acc, product) => {
       (acc[product.category] ||= []).push(product);
       return acc;
-    }, {} as Record<string, ProductResponseDto[]>);
+    }, {} as Record<string, FoodResponseDto[]>);
   }, [filteredProducts]);
 
-  const goDetails = (item: ProductResponseDto) => {
-    navigation(`/productDetails?id=${item.id}`, { state: { item } });
+  const goDetails = (item: FoodResponseDto) => {
+    navigation(`/foodDetails?id=${item.id}`, { state: { item } });
   };
 
   return (

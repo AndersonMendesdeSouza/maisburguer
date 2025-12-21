@@ -1,13 +1,20 @@
 .card {
   position: relative;
   border-radius: 30px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid #ffffff12;
+  background: radial-gradient(
+      900px 260px at 50% 0%,
+      rgba(255, 255, 255, 0.06),
+      rgba(35, 35, 35, 0.69)
+    ),
+    var(--bg-secondary);
+  border: 1px solid rgba(255, 255, 255, 0.07);
   overflow: hidden;
   height: 350px;
   box-shadow: 0 18px 36px rgba(0, 0, 0, 0.25);
   width: 270px;
   transition: 0.4s;
+  color: var(--text-primary);
+  cursor: pointer;
 }
 
 .card:hover {
@@ -16,15 +23,21 @@
 
 .badge {
   position: absolute;
-  top: 10px;
-  left: 10px;
-  z-index: 2;
-  padding: 3px 8px;
-  border-radius: 7px;
-  background: rgba(255, 13, 13, 0.747);
-  color: #ffffff;
+  top: 12px;
+  left: 12px;
+  z-index: 4;
+  padding: 5px 14px;
+  border-radius: 9px;
+  background: var(--bestSellerBg);
+  color: var(--bestSellerText);
   font-size: 10px;
   font-weight: 600;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35) inset, 0 10px 30px rgba(0, 0, 0, 0.45),
+    0 0 26px var(--bestSellerGlow);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .imgWrap {
@@ -36,7 +49,7 @@
 }
 
 .addBtn {
-  background: #242424ff;
+  background: rgba(0, 0, 0, 0.35);
   border-radius: 999px;
   width: 35px;
   height: 35px;
@@ -46,11 +59,14 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   cursor: pointer;
   transform: scale(1);
-  transition: transform 120ms ease, opacity 120ms ease;
+  transition: transform 120ms ease, opacity 120ms ease, background 120ms ease;
   z-index: 3;
+  color: #fff;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 }
 
 .addBtn:active {
@@ -75,13 +91,13 @@
 .title {
   font-size: 15px;
   font-weight: 900;
-  color: var(--text-primary, #fff);
+  color: var(--text-primary);
 }
 
 .desc {
   font-size: 11px;
   line-height: 1.35;
-  color: var(--text-secondary, rgba(255, 255, 255, 0.7));
+  color: var(--text-secondary);
   opacity: 0.9;
 }
 
@@ -93,14 +109,14 @@
 }
 
 .price {
-  font-weight: 500;
-  color: var(--highlight-primary, #ffc400);
+  font-weight: 700;
+  color: var(--highlight);
   font-size: 16px;
 }
 
 .minPrice {
-  font-weight: 100;
-  color: #ffffff55;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.35);
   font-size: 12px;
   text-decoration: line-through;
 }
@@ -111,7 +127,7 @@
   border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   background: rgba(0, 0, 0, 0.18);
-  color: var(--text-primary, #fff);
+  color: var(--text-primary);
   cursor: pointer;
   font-size: 11px;
   font-weight: 800;

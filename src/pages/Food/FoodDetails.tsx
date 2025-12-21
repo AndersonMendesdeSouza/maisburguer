@@ -1,10 +1,11 @@
 import { useMemo, useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import styles from "./Productdetails.module.css";
+import styles from "./FoodDetails.module.css";
 import { Share2, Minus, Plus, Check, ArrowLeft, ShoppingCart } from "lucide-react";
 import { addCart, FoodCard } from "../../components/food/FoodCard";
-import type { ProductResponseDto } from "../../dtos/Product-Response.Dto";
+import type { FoodResponseDto } from "../../dtos/Food-Response.Dto";
 import { toast, ToastContainer } from "react-toastify";
+import Colors from "../../themes/Colors";
 
 type Addon = {
   id: string;
@@ -16,17 +17,17 @@ type Addon = {
 const BRL = (v: number) =>
   v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
-export default function ProductDetails() {
+export default function FoodDetails() {
   const navigation = useNavigate();
   const location = useLocation();
   const [qty, setQty] = useState(1);
   const [note, setNote] = useState("");
   const [cartActived, setCartActivedCart] = useState(false);
-  const [products, setProducts] = useState<ProductResponseDto | null>(null);
+  const [products, setProducts] = useState<FoodResponseDto | null>(null);
   const [selectedAddons, setSelectedAddons] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
-    const item = (location.state as { item?: ProductResponseDto } | null)?.item;
+    const item = (location.state as { item?: FoodResponseDto } | null)?.item;
 
     if (item) {
       setProducts(item);
@@ -44,7 +45,7 @@ export default function ProductDetails() {
     { id: "ovo", name: "Ovo Frito", desc: "Gema mole", price: 2.6 },
   ];
 
-  const complements: ProductResponseDto[] = [
+  const complements: FoodResponseDto[] = [
     {
       id: 1,
       name: "Monster Bacon",
@@ -113,8 +114,8 @@ export default function ProductDetails() {
     },
   ];
 
-  const goDetails = (item: ProductResponseDto) => {
-    navigation(`/productDetails?id=${item.id}`, { state: { item } });
+  const goDetails = (item: FoodResponseDto) => {
+    navigation(`/foodDetails?id=${item.id}`, { state: { item } });
   };
 
   const toggleAddon = (id: string) => {
@@ -163,7 +164,18 @@ export default function ProductDetails() {
   }
 
   return (
-    <div className={styles.page}>
+    <div
+      className={styles.page}
+      style={
+        {
+          "--bg-primary": Colors.Background.primary,
+          "--bg-secondary": Colors.Background.secondary,
+          "--text-primary": Colors.Texts.primary,
+          "--text-secondary": Colors.Texts.secondary,
+          "--highlight": Colors.Highlight.primary,
+        } as React.CSSProperties
+      }
+    >
       <ToastContainer position="top-center" />
 
       {cartActived && (
