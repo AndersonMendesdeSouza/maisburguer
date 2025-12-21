@@ -16,6 +16,7 @@ import { useNavigate } from "react-router-dom";
 import whatsapp from "../../assets/whatsapp.png";
 import { MainSkeleton } from "../../components/skeleton/main/MainSkeleton";
 import type { ProductResponseDto } from "../../dtos/Product-Response.Dto";
+import { ToastContainer } from "react-toastify";
 
 const productsMock: ProductResponseDto[] = [
   {
@@ -109,6 +110,14 @@ export function Main() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const searchRef = useRef<HTMLInputElement | null>(null);
+  const [cartActived, setCartActivedCart] = useState(false);
+
+  function activedCart() {
+    setCartActivedCart(true);
+    setTimeout(() => {
+      setCartActivedCart(false);
+    }, 7000);
+  }
 
   useEffect(() => {
     const t = setTimeout(() => setLoading(false), 1000);
@@ -164,6 +173,19 @@ export function Main() {
       }
     >
       <div className={styles.page}>
+        <ToastContainer position="top-center" />
+        {cartActived && (
+          <div className={styles.cartFloat}>
+            <button
+              className={styles.headerCartActived}
+              type="button"
+              onClick={() => navigation("/cart")}
+            >
+              <ShoppingCart size={20} />
+            </button>
+          </div>
+        )}
+
         <header className={styles.header}>
           <div className={styles.headerContent}>
             <div className={styles.brand}>
@@ -175,7 +197,11 @@ export function Main() {
               <span className={styles.brandName}>Mais Burguer</span>
             </div>
 
-            <button className={styles.headerCart} type="button" onClick={() => navigation("/cart")}>
+            <button
+              className={styles.headerCart}
+              type="button"
+              onClick={() => navigation("/cart")}
+            >
               <ShoppingCart size={20} />
             </button>
           </div>
@@ -206,10 +232,7 @@ export function Main() {
           </div>
         </header>
 
-        <div
-          className={styles.whatsappFloat}
-          onClick={() => handleWatsappClick()}
-        >
+        <div className={styles.whatsappFloat} onClick={handleWatsappClick}>
           <img src={whatsapp} alt="WhatsApp" />
         </div>
 
@@ -255,8 +278,9 @@ export function Main() {
               <button
                 type="button"
                 onClick={() => setCategory(null)}
-                className={`${styles.categoryPill} ${category === null ? styles.categoryActive : ""
-                  }`}
+                className={`${styles.categoryPill} ${
+                  category === null ? styles.categoryActive : ""
+                }`}
               >
                 Todos
               </button>
@@ -268,8 +292,9 @@ export function Main() {
                     key={item.name}
                     type="button"
                     onClick={() => setCategory(item.name)}
-                    className={`${styles.categoryPill} ${category === item.name ? styles.categoryActive : ""
-                      }`}
+                    className={`${styles.categoryPill} ${
+                      category === item.name ? styles.categoryActive : ""
+                    }`}
                   >
                     <Icon size={18} />
                     <span>{item.name}</span>
@@ -309,6 +334,7 @@ export function Main() {
                         img={item.img}
                         badge={item.badge}
                         onDetails={() => goDetails(item)}
+                        functions={() => activedCart()}
                       />
                     ))}
                   </div>

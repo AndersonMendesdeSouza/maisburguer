@@ -93,6 +93,33 @@
   gap: 10px;
   align-items: center;
 }
+.cartFloat {
+  position: fixed;
+  z-index: 100;
+  right: 0;
+  top: 90px;
+  width: 80px;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--highlight);
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+  animation: cartSlideIn 0.4s ease-out forwards;
+}
+
+@keyframes cartSlideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
 
 .hero {
   height: 300px;
@@ -165,6 +192,17 @@
   border-radius: 14px;
   border: 1px solid rgba(255, 255, 255, 0.06);
   background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.9);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+.headerCartActived {
+  width: 40px;
+  height: 40px;
+  border-radius: 14px;
+  border: 1px solid rgba(1, 1, 1, 0.069);
+  background: rgba(0, 0, 0, 0.093);
   color: rgba(255, 255, 255, 0.9);
   display: grid;
   place-items: center;

@@ -2,10 +2,11 @@
 import { useMemo, useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import styles from "./Productdetails.module.css";
-import { Share2, Minus, Plus, Check, ArrowLeft } from "lucide-react";
-import { FoodCard } from "../../components/food/FoodCard";
+import { Share2, Minus, Plus, Check, ArrowLeft, ShoppingCart } from "lucide-react";
+import { addCart, FoodCard } from "../../components/food/FoodCard";
 import type { ProductResponseDto } from "../../dtos/Product-Response.Dto";
 import { sendOrderToWhatsApp } from "../../utils/sendOrderToWhatsApp";
+import { toast, ToastContainer } from "react-toastify";
 
 type Addon = {
   id: string;
@@ -22,6 +23,7 @@ export default function ProductDetails() {
   const location = useLocation();
   const [qty, setQty] = useState(1);
   const [note, setNote] = useState("");
+  const [cartActived, setCartActivedCart] = useState(false);
   const [products, setProducts] = useState<ProductResponseDto | null>(null);
   const [selectedAddons, setSelectedAddons] = useState<Record<string, boolean>>(
     {}
@@ -143,8 +145,27 @@ export default function ProductDetails() {
 
   if (!products) return null;
 
+  function activedCart() {
+    setCartActivedCart(true);
+    setTimeout(() => {
+      setCartActivedCart(false);
+    }, 7000);
+  }
   return (
     <div className={styles.page}>
+      <ToastContainer position="top-center" />
+      {cartActived && (
+        <div className={styles.cartFloat}>
+          <button
+            className={styles.headerCartActived}
+            type="button"
+            onClick={() => navigation("/cart")}
+          >
+            <ShoppingCart size={20} />
+          </button>
+        </div>
+      )}
+
       <div className={styles.top}>
         <div className={styles.media}>
           <img
@@ -198,16 +219,14 @@ export default function ProductDetails() {
                   <button
                     key={a.id}
                     type="button"
-                    className={`${styles.addonRow} ${
-                      active ? styles.addonActive : ""
-                    }`}
+                    className={`${styles.addonRow} ${active ? styles.addonActive : ""
+                      }`}
                     onClick={() => toggleAddon(a.id)}
                   >
                     <span className={styles.toggle}>
                       <span
-                        className={`${styles.toggleKnob} ${
-                          active ? styles.toggleOn : ""
-                        }`}
+                        className={`${styles.toggleKnob} ${active ? styles.toggleOn : ""
+                          }`}
                       >
                         {active ? <Check size={14} /> : null}
                       </span>
@@ -262,7 +281,16 @@ export default function ProductDetails() {
           </div>
 
           <div className={styles.buttonsWrapper}>
-            <button className={styles.addBtn} type="button">
+            <button
+              className={styles.addBtn}
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                addCart(products);
+                toast.success('Produto adicionado ao carrinho Ver carrinho', { autoClose: 151110 })
+                activedCart()
+              }}
+            >
               <span>Adicionar</span>
               <span className={styles.addBtnPrice}>{BRL(total)}</span>
             </button>
@@ -299,6 +327,7 @@ export default function ProductDetails() {
                 desc={c.desc}
                 price={c.price}
                 onDetails={() => goDetails(c)}
+                functions={() => activedCart()}
               />
             </div>
           ))}

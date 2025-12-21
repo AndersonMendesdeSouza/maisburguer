@@ -1,5 +1,6 @@
 import { Plus } from "lucide-react";
 import styles from "./FoodCard.module.css";
+import { toast } from "react-toastify";
 
 type FoodCardProps = {
   id?: number;
@@ -9,6 +10,7 @@ type FoodCardProps = {
   img?: string;
   badge?: string;
   onDetails?: () => void;
+  functions?: () => void;
 };
 
 function formatMoney(value?: number) {
@@ -19,7 +21,7 @@ function formatMoney(value?: number) {
   });
 }
 
-function addCart(item: any) {
+export function addCart(item: any) {
   const raw = localStorage.getItem("product");
   let arr: any[] = [];
 
@@ -45,7 +47,7 @@ function addCart(item: any) {
   localStorage.setItem("product", JSON.stringify(arr));
 }
 
-export function FoodCard({ id, name, desc, price, img, badge, onDetails }: FoodCardProps) {
+export function FoodCard({ id, name, functions, desc, price, img, badge, onDetails }: FoodCardProps) {
   const priceMin = price !== undefined ? price + 7 : undefined;
 
   const item = {
@@ -67,6 +69,8 @@ export function FoodCard({ id, name, desc, price, img, badge, onDetails }: FoodC
           onClick={(e) => {
             e.stopPropagation();
             addCart(item);
+            toast.success('Produto adicionado ao carrinho', { autoClose: 1500 })
+            functions?.()
           }}
           className={styles.addBtn}
           aria-label="Adicionar ao carrinho"

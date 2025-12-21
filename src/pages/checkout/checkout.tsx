@@ -134,7 +134,7 @@ export default function Checkout() {
     try {
       const sel = localStorage.getItem(LS_SELECTED_KEY);
       if (sel) setSelectedAddressId(sel);
-    } catch {}
+    } catch { }
   }, []);
 
   useEffect(() => {
@@ -177,7 +177,7 @@ export default function Checkout() {
     const phoneDest = "5564999663524";
     const lines: string[] = [];
 
-    lines.push("🧾 *Pedido - Finalizar*");
+    lines.push(`🧾 *Pedido - ${fullName}`);
     lines.push("");
     lines.push("*Resumo*");
     items.forEach((it) => {
@@ -265,15 +265,15 @@ export default function Checkout() {
       a.number.trim().toLowerCase() === newAddr.number.trim().toLowerCase() &&
       a.district.trim().toLowerCase() === newAddr.district.trim().toLowerCase() &&
       (a.complement || "").trim().toLowerCase() ===
-        (newAddr.complement || "").trim().toLowerCase();
+      (newAddr.complement || "").trim().toLowerCase();
 
     const existing = savedAddresses.find(same);
     const next = existing
       ? savedAddresses.map((a) =>
-          a.id === existing.id
-            ? { ...a, ...newAddr, id: existing.id, createdAt: Date.now() }
-            : a
-        )
+        a.id === existing.id
+          ? { ...a, ...newAddr, id: existing.id, createdAt: Date.now() }
+          : a
+      )
       : [newAddr, ...savedAddresses];
 
     saveLSAddresses(next);
@@ -625,9 +625,8 @@ export default function Checkout() {
                 <div className={styles.payList}>
                   <button
                     type="button"
-                    className={`${styles.payItem} ${
-                      needChange === true ? styles.payItemActive : ""
-                    }`}
+                    className={`${styles.payItem} ${needChange === true ? styles.payItemActive : ""
+                      }`}
                     onClick={() => setNeedChange(true)}
                   >
                     <div className={styles.payLeft}>
@@ -640,17 +639,15 @@ export default function Checkout() {
                       </div>
                     </div>
                     <div
-                      className={`${styles.radio} ${
-                        needChange === true ? styles.radioOn : ""
-                      }`}
+                      className={`${styles.radio} ${needChange === true ? styles.radioOn : ""
+                        }`}
                     />
                   </button>
 
                   <button
                     type="button"
-                    className={`${styles.payItem} ${
-                      needChange === false ? styles.payItemActive : ""
-                    }`}
+                    className={`${styles.payItem} ${needChange === false ? styles.payItemActive : ""
+                      }`}
                     onClick={() => {
                       setNeedChange(false);
                       setCashChange("");
@@ -666,9 +663,8 @@ export default function Checkout() {
                       </div>
                     </div>
                     <div
-                      className={`${styles.radio} ${
-                        needChange === false ? styles.radioOn : ""
-                      }`}
+                      className={`${styles.radio} ${needChange === false ? styles.radioOn : ""
+                        }`}
                     />
                   </button>
                 </div>
@@ -710,6 +706,7 @@ export default function Checkout() {
             } else {
               persistAddressAfterSend();
               window.open(waLink, "_blank", "noopener,noreferrer");
+              localStorage.removeItem("product");
             }
           }}
         >

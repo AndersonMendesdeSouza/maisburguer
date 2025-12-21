@@ -104,7 +104,7 @@ export default function Cart() {
           </header>
 
           <div className={styles.list}>
-            {items.map((it) => (
+            {items.length > 0 ? items.map((it) => (
               <div key={it.id} className={styles.card}>
                 <div className={styles.thumbWrap}>
                   <img className={styles.thumb} src={it.image} alt={it.name} />
@@ -152,7 +152,20 @@ export default function Cart() {
                   {it.note ? <div className={styles.noteLine}>{it.note}</div> : null}
                 </div>
               </div>
-            ))}
+            )
+
+            ) : (
+              <div className={styles.emptyState}>
+                <h3>Você ainda não possui pedidos</h3>
+
+                <button
+                  className={styles.emptyButton}
+                  onClick={() => navigation("/")}
+                >
+                  Fazer pedido
+                </button>
+              </div>
+            )}
           </div>
 
           <section className={styles.obsSection}>
@@ -195,6 +208,7 @@ export default function Cart() {
           <button
             className={styles.checkoutBtn}
             type="button"
+            disabled={items.length === 0}
             onClick={() =>
               navigation("/checkout", {
                 state: {
