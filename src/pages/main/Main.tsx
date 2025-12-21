@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useEffect, useRef } from "react";
 import Colors from "../../themes/Colors";
 import styles from "./Main.module.css";
-import { FoodCard } from "../../components/food/foodCard";
+import { FoodCard } from "../../components/food/FoodCard";
 import {
   PlusCircle,
   CupSoda,
