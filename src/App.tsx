@@ -1,8 +1,9 @@
-import { Route, Routes } from "react-router-dom"
+import { Route, Routes } from "react-router-dom";
+
 import Cart from "./pages/cart/Cart";
 import Main from "./pages/main/Main";
-import Checkout from "./pages/checkout/checkout";
-import FoodDetails from "./pages/food/FoodDetails";
+import Checkout from "./pages/checkout/Checkout";
+import FoodDetails from "./pages/Food/FoodDetails";
 
 function App() {
   return (
@@ -12,7 +13,7 @@ function App() {
       <Route path="/cart" element={<Cart />} />
       <Route path="/checkout" element={<Checkout />} />
     </Routes>
-  )
+  );
 }
 
-export default App
+export default App;
