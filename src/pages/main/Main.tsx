@@ -328,6 +328,7 @@ export function Main() {
                     {items.map((item) => (
                       <FoodCard
                         key={item.id}
+                        id={item.id}
                         name={item.name}
                         desc={item.desc}
                         price={item.price}
