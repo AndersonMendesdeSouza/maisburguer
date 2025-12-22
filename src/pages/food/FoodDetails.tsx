@@ -245,15 +245,17 @@ export default function FoodDetails() {
             </div>
           )}
 
-          <div className={styles.section}>
-            <h2 className={styles.sectionTitle}>Alguma observação?</h2>
-            <textarea
-              className={styles.note}
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
-              placeholder="Ex: Tirar cebola, maionese à parte..."
-            />
-          </div>
+          {products.category === "Sanduíches" && (
+            <div className={styles.section}>
+              <h2 className={styles.sectionTitle}>Alguma observação?</h2>
+              <textarea
+                className={styles.note}
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+                placeholder="Ex: Tirar cebola, maionese à parte..."
+              />
+            </div>
+          )}
         </div>
       </div>
 
