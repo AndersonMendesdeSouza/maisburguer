@@ -134,6 +134,7 @@ export default function Cart() {
         }
       >
         <div className={styles.content}>
+          
           <header className={styles.header}>
             <button
               className={styles.iconBtn}

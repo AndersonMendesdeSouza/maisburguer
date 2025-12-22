@@ -1,7 +1,14 @@
 import { useMemo, useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import styles from "./FoodDetails.module.css";
-import { Share2, Minus, Plus, Check, ArrowLeft, ShoppingCart } from "lucide-react";
+import {
+  Share2,
+  Minus,
+  Plus,
+  Check,
+  ArrowLeft,
+  ShoppingCart,
+} from "lucide-react";
 import { addCart, FoodCard } from "../../components/food/FoodCard";
 import type { FoodResponseDto } from "../../dtos/Food-Response.Dto";
 import { toast, ToastContainer } from "react-toastify";
@@ -24,14 +31,20 @@ export default function FoodDetails() {
   const [note, setNote] = useState("");
   const [cartActived, setCartActivedCart] = useState(false);
   const [products, setProducts] = useState<FoodResponseDto | null>(null);
-  const [selectedAddons, setSelectedAddons] = useState<Record<string, boolean>>({});
+  const [selectedAddons, setSelectedAddons] = useState<Record<string, boolean>>(
+    {}
+  );
+  const [complements, setComplements] = useState<FoodResponseDto[]>([]);
 
   useEffect(() => {
-    const item = (location.state as { item?: FoodResponseDto } | null)?.item;
+    const state = (location.state || {}) as {
+      item?: FoodResponseDto;
+      productsMock?: FoodResponseDto[];
+    };
 
-    if (item) {
-      setProducts(item);
-
+    if (state.item) {
+      setProducts(state.item);
+      setComplements(Array.isArray(state.productsMock) ? state.productsMock : []);
       requestAnimationFrame(() => {
         window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
       });
@@ -45,77 +58,13 @@ export default function FoodDetails() {
     { id: "ovo", name: "Ovo Frito", desc: "Gema mole", price: 2.6 },
   ];
 
-  const complements: FoodResponseDto[] = [
-    {
-      id: 1,
-      name: "Monster Bacon",
-      desc: "Hambúrguer artesanal 160g, cheddar, bacon crocante e molho especial.",
-      price: 32,
-      badge: "MAIS PEDIDO",
-      img: "https://images.unsplash.com/photo-1550547660-d9450f859349",
-      category: "Sanduíches",
-    },
-    {
-      id: 2,
-      name: "Classic Salad",
-      desc: "Pão brioche, blend 160g, alface, tomate e maionese.",
-      price: 28,
-      img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd",
-      category: "Sanduíches",
-    },
-    {
-      id: 3,
-      name: "Monster Bacon",
-      desc: "Hambúrguer artesanal 160g, cheddar, bacon crocante e molho especial.",
-      price: 32,
-      badge: "MAIS PEDIDO",
-      img: "https://images.unsplash.com/photo-1550547660-d9450f859349",
-      category: "Sanduíches",
-    },
-    {
-      id: 4,
-      name: "Classic Salad",
-      desc: "Pão brioche, blend 160g, alface, tomate e maionese.",
-      price: 28,
-      img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd",
-      category: "Sanduíches",
-    },
-    {
-      id: 7,
-      name: "Coca-Cola Lata",
-      price: 6,
-      desc: "Refrigerante 350ml",
-      img: "https://blog.somostera.com/hubfs/Blog_free_images/Uma%20lata%20de%20coca%20cola%20em%20cima%20da%20mesa.jpg",
-      category: "Bebidas",
-    },
-    {
-      id: 8,
-      name: "Coca-Cola 2L",
-      price: 6,
-      desc: "Garrafa 2L",
-      img: "https://felicitapizzaria.chefware.com.br/67/0/0/coca-cola-2-litros.jpg",
-      category: "Bebidas",
-    },
-    {
-      id: 9,
-      name: "Suco de Laranja",
-      price: 8,
-      desc: "Natural",
-      img: "https://www.sabornamesa.com.br/media/k2/items/cache/b018fd5ec8f1b90a1c8015900c2c2630_XL.jpg",
-      category: "Bebidas",
-    },
-    {
-      id: 10,
-      name: "Batata Frita",
-      price: 12,
-      desc: "Porção",
-      img: "https://swiftbr.vteximg.com.br/arquivos/ids/201377-768-768/622291-batata-airfryer-extra-croc-mccain_3.jpg?v=638657204471230000",
-      category: "Adicionais",
-    },
-  ];
-
   const goDetails = (item: FoodResponseDto) => {
-    navigation(`/foodDetails?id=${item.id}`, { state: { item } });
+    navigation(`/foodDetails?id=${item.id}`, {
+      state: {
+        item,
+        productsMock: complements,
+      },
+    });
   };
 
   const toggleAddon = (id: string) => {
@@ -123,7 +72,9 @@ export default function FoodDetails() {
   };
 
   const selectedAddonList = useMemo(() => {
-    return addons.filter((a) => selectedAddons[a.id]).map((a) => ({ id: a.id, name: a.name, price: a.price }));
+    return addons
+      .filter((a) => selectedAddons[a.id])
+      .map((a) => ({ id: a.id, name: a.name, price: a.price }));
   }, [selectedAddons]);
 
   const addonsTotal = useMemo(() => {
@@ -150,7 +101,9 @@ export default function FoodDetails() {
       addons: selectedAddonList,
       unitPrice,
       totalPrice: unitPrice * qty,
-      subtitle: selectedAddonList.length ? selectedAddonList.map((a) => `+ ${a.name}`).join(", ") : undefined,
+      subtitle: selectedAddonList.length
+        ? selectedAddonList.map((a) => `+ ${a.name}`).join(", ")
+        : undefined,
     };
   }, [products, qty, note, selectedAddonList, addonsTotal]);
 
@@ -180,7 +133,11 @@ export default function FoodDetails() {
 
       {cartActived && (
         <div className={styles.cartFloat}>
-          <button className={styles.headerCartActived} type="button" onClick={() => navigation("/cart")}>
+          <button
+            className={styles.headerCartActived}
+            type="button"
+            onClick={() => navigation("/cart")}
+          >
             <ShoppingCart size={20} />
           </button>
         </div>
@@ -188,13 +145,26 @@ export default function FoodDetails() {
 
       <div className={styles.top}>
         <div className={styles.media}>
-          <img className={styles.mediaImg} src={products.img} alt={products.name} />
+          <img
+            className={styles.mediaImg}
+            src={products.img}
+            alt={products.name}
+          />
 
-          <button type="button" className={styles.backBtn} aria-label="Voltar" onClick={() => navigation(-1)}>
+          <button
+            type="button"
+            className={styles.backBtn}
+            aria-label="Voltar"
+            onClick={() => navigation(-1)}
+          >
             <ArrowLeft size={18} />
           </button>
 
-          <button type="button" className={styles.shareBtn} aria-label="Compartilhar">
+          <button
+            type="button"
+            className={styles.shareBtn}
+            aria-label="Compartilhar"
+          >
             <Share2 size={18} />
           </button>
         </div>
@@ -205,7 +175,9 @@ export default function FoodDetails() {
 
             <div className={styles.priceRow}>
               <span className={styles.price}>{BRL(products.price)}</span>
-              {products.badge ? <span className={styles.badge}>{products.badge}</span> : null}
+              {products.badge ? (
+                <span className={styles.badge}>{products.badge}</span>
+              ) : null}
             </div>
 
             <p className={styles.desc}>{products.desc}</p>
@@ -225,11 +197,17 @@ export default function FoodDetails() {
                   <button
                     key={a.id}
                     type="button"
-                    className={`${styles.addonRow} ${active ? styles.addonActive : ""}`}
+                    className={`${styles.addonRow} ${
+                      active ? styles.addonActive : ""
+                    }`}
                     onClick={() => toggleAddon(a.id)}
                   >
                     <span className={styles.toggle}>
-                      <span className={`${styles.toggleKnob} ${active ? styles.toggleOn : ""}`}>
+                      <span
+                        className={`${styles.toggleKnob} ${
+                          active ? styles.toggleOn : ""
+                        }`}
+                      >
                         {active ? <Check size={14} /> : null}
                       </span>
                     </span>
@@ -292,7 +270,9 @@ export default function FoodDetails() {
 
                 addCart(cartItem);
 
-                toast.success("Produto adicionado ao carrinho", { autoClose: 2000 });
+                toast.success("Produto adicionado ao carrinho", {
+                  autoClose: 2000,
+                });
                 activedCart();
               }}
             >

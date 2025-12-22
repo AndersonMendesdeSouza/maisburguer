@@ -38,11 +38,11 @@ const productsMock: FoodResponseDto[] = [
   },
   {
     id: 3,
-    name: "Monster Bacon",
+    name: "Super Bacon",
     desc: "Hambúrguer artesanal 160g, cheddar, bacon crocante e molho especial.",
     price: 32,
     badge: "MAIS PEDIDO",
-    img: "https://images.unsplash.com/photo-1550547660-d9450f859349",
+    img: "https://www.lecreuset.com.br/dw/image/v2/BDRT_PRD/on/demandware.static/-/Sites-le-creuset-br-master/default/dwa4a48e0b/images/hamburguer-skillet-lecreuset.png?sw=650&sh=650&sm=fit",
     category: "Sanduíches",
   },
   {
@@ -156,7 +156,12 @@ export default function Main() {
   }, [filteredProducts]);
 
   const goDetails = (item: FoodResponseDto) => {
-    navigation(`/foodDetails?id=${item.id}`, { state: { item } });
+    navigation(`/foodDetails?id=${item.id}`, {
+      state: {
+        item,
+        productsMock, // ou productsMock
+      },
+    });
   };
 
   return (
@@ -317,7 +322,9 @@ export default function Main() {
                       <h2 className={styles.sectionTitle}>{cat}</h2>
                     </div>
                     <span className={styles.sectionCount}>
-                      <span className={styles.sectionQuant}>{items.length}</span>
+                      <span className={styles.sectionQuant}>
+                        {items.length}
+                      </span>
                       <span> opções</span>
                     </span>
                   </div>
