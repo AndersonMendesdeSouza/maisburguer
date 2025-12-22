@@ -1,7 +1,6 @@
 .page {
   min-height: 100vh;
   width: 100%;
-  padding: 20px;
   box-sizing: border-box;
   font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue",
     Arial;
@@ -80,7 +79,6 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
-  border-radius: 20px;
   min-width: 0;
   background: radial-gradient(900px 380px at 25% 0%, rgba(255, 255, 255, 0.05), transparent),
     radial-gradient(900px 380px at 90% 10%, rgba(255, 255, 255, 0.03), transparent),
@@ -466,12 +464,6 @@
 
 @media (max-width: 520px) {
   .page {
-    padding: 0px;
-  }
-
-  .top {
-    padding: 12px;
-    gap: 0px;
   }
 
   .compItem {
