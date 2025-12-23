@@ -1,4 +1,3 @@
-// Main.tsx (completo, só ajustei o que é de horário para usar o arquivo)
 import React, { useMemo, useState, useEffect, useRef } from "react";
 import Colors from "../../themes/Colors";
 import styles from "./Main.module.css";
@@ -125,11 +124,20 @@ export default function Main() {
 
   useEffect(() => {
     const t = setTimeout(() => setLoading(false), 1000);
-    if (openNow) {
-      toast.success("Estabelecimento aberto", { autoClose: 2500 });
-    } else {
-      toast.error("Estabelecimento fechado", { autoClose: 2500 });
-    }
+
+    const KEY = "mb_store_toast_shown_v1";
+    try {
+      const already = localStorage.getItem(KEY);
+      if (!already) {
+        if (openNow) {
+          toast.success("Estabelecimento aberto", { autoClose: 2500 });
+        } else {
+          toast.error("Estabelecimento fechado", { autoClose: 2500 });
+        }
+        localStorage.setItem(KEY, "1");
+      }
+    } catch {}
+
     return () => clearTimeout(t);
   }, []);
 
