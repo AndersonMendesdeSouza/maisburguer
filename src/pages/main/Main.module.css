@@ -257,6 +257,37 @@
   font-weight: 500;
   letter-spacing: 0.6px;
 }
+.footer {
+  width: 100%;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  padding: 22px 12px 18px 12px;
+  margin-top: 26px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  opacity: 0.9;
+}
+
+.footerText {
+  font-size: 9px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.385);
+  letter-spacing: 0.2px;
+}
+
+.footerHandle {
+  font-size: 10px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.625);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+
+.footerHandle:hover {
+  color: rgba(255, 255, 255, 0.92);
+}
 
 .ratingBadge {
   display: inline-flex;

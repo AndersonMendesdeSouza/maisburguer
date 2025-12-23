@@ -314,9 +314,16 @@ export default function Main() {
           {openNow ? (
             <img src={openNow ? whatsapp : whatsappred} alt="WhatsApp" />
           ) : (
-            <div style={{display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center"}}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
               <img src={openNow ? whatsapp : whatsappred} alt="WhatsApp" />
-              <span style={{ fontWeight: "500",  }}> Fechado</span>
+              <span style={{ fontWeight: "500" }}> Fechado</span>
             </div>
           )}
         </div>
@@ -457,6 +464,19 @@ export default function Main() {
             })}
           </div>
         )}
+        <footer className={styles.footer}>
+          <span className={styles.footerText}>
+            Desenvolvido por Anderson Mendes
+          </span>
+          <a
+            className={styles.footerHandle}
+            href="https://instagram.com/andersonmends__"
+            target="_blank"
+            rel="noreferrer"
+          >
+            @AndersonMends__
+          </a>
+        </footer>
       </div>
     </div>
   );

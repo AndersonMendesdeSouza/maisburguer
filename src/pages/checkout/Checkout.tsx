@@ -145,7 +145,7 @@ export default function Checkout() {
   const [phone, setPhone] = useState("");
   const [cep, setCep] = useState("");
   const [street, setStreet] = useState("");
-  const [number, setNumber] = useState("123");
+  const [number, setNumber] = useState("");
   const [district, setDistrict] = useState("");
   const [complement, setComplement] = useState("");
   const [payment, setPayment] = useState<PaymentType>("PIX");
@@ -349,7 +349,7 @@ export default function Checkout() {
       setPhone(addr.phone || "");
       setCep(addr.cep || "");
       setStreet(addr.street || "");
-      setNumber(addr.number || "123");
+      setNumber(addr.number || "");
       setDistrict(addr.district || "");
       setComplement(addr.complement || "");
     }
@@ -363,7 +363,7 @@ export default function Checkout() {
     setPhone("");
     setCep("");
     setStreet("");
-    setNumber("123");
+    setNumber("");
     setDistrict("");
     setComplement("");
   }
