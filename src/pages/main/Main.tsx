@@ -17,7 +17,7 @@ import whatsapp from "../../assets/whatsapp.png";
 import { MainSkeleton } from "../../components/skeletons/main/MainSkeleton";
 import type { FoodResponseDto } from "../../dtos/Food-Response.Dto";
 import { toast, ToastContainer } from "react-toastify";
-import { getStoreStatusNow } from "../../utils/storeHours";
+import { getStoreStatusNow, STORE_HOURS } from "../../utils/storeHours";
 
 const productsMock: FoodResponseDto[] = [
   {
@@ -121,19 +121,30 @@ export default function Main() {
       setCartActivedCart(false);
     }, 7000);
   }
+  type StoreHours = { open: number; close: number };
+  const storeHours = useMemo<StoreHours>(() => {
+    const open = Number((STORE_HOURS as any)?.open);
+    const close = Number((STORE_HOURS as any)?.close);
 
+    if (Number.isFinite(open) && Number.isFinite(close)) return { open, close };
+    return { open: 18, close: 2 };
+  }, []);
   useEffect(() => {
     const t = setTimeout(() => setLoading(false), 1000);
 
     const KEY = "mb_store_toast_shown_v1";
-
+    const left = hoursUntilOpen(storeHours);
     try {
       const already = sessionStorage.getItem(KEY);
       if (!already) {
         const status = getStoreStatusNow().openNow; // pega o status do momento
         if (status)
           toast.success("Estabelecimento aberto", { autoClose: 2500 });
-        else toast.error("Estabelecimento fechado", { autoClose: 2500 });
+        else
+          toast.error(
+            `Fechado, abrimos em ${left} ${left === 1 ? "hora" : "horas"}`,
+            { autoClose: 2500 }
+          );
 
         sessionStorage.setItem(KEY, "1");
       }
@@ -393,4 +404,7 @@ export default function Main() {
       </div>
     </div>
   );
+}
+function hoursUntilOpen(storeHours: any) {
+  throw new Error("Function not implemented.");
 }
