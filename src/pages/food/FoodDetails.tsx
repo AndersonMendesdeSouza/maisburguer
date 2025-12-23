@@ -65,13 +65,18 @@ export default function FoodDetails() {
       );
       resetForNewProduct();
       requestAnimationFrame(() => {
-        window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+        window.scrollTo({ top: 0, left: 0, behavior: "auto" });
       });
     }
   }, [location.state]);
 
   const addons: Addon[] = [
-    { id: "bacon", name: "Bacon Extra", desc: "Fatia extra crocante", price: 4 },
+    {
+      id: "bacon",
+      name: "Bacon Extra",
+      desc: "Fatia extra crocante",
+      price: 4,
+    },
     {
       id: "cheddar",
       name: "Queijo Cheddar",
@@ -143,7 +148,14 @@ export default function FoodDetails() {
       totalPrice: unitPrice * qty,
       subtitle: subtitleParts.length ? subtitleParts.join(", ") : undefined,
     };
-  }, [products, qty, note, selectedAddonList, addonsTotal, selectedDrinkOption]);
+  }, [
+    products,
+    qty,
+    note,
+    selectedAddonList,
+    addonsTotal,
+    selectedDrinkOption,
+  ]);
 
   const checkoutItem = useMemo(() => {
     if (!cartItem) return null;
@@ -179,6 +191,17 @@ export default function FoodDetails() {
     setCartActivedCart(true);
     setTimeout(() => setCartActivedCart(false), 7000);
   }
+  const handleBack = () => {
+    // desativa smooth temporariamente
+    document.documentElement.style.scrollBehavior = "auto";
+
+    navigation(-1);
+
+    // restaura smooth depois
+    setTimeout(() => {
+      document.documentElement.style.scrollBehavior = "smooth";
+    }, 50);
+  };
 
   return (
     <div
@@ -218,7 +241,7 @@ export default function FoodDetails() {
           <button
             type="button"
             className={styles.backBtn}
-            onClick={() => navigation(-1)}
+            onClick={() => handleBack()}
           >
             <ArrowLeft size={18} />
           </button>
@@ -373,7 +396,7 @@ export default function FoodDetails() {
               onClick={() => {
                 if (!checkoutState) return;
                 resetForNewProduct();
-                addCart(checkoutItem)
+                addCart(checkoutItem);
                 navigation("/checkout", { state: checkoutState });
               }}
             >
