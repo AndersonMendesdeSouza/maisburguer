@@ -367,7 +367,7 @@ export default function Main() {
                     <span className={styles.ratingBadge}>
                       4.8 <Star size={14} />
                     </span>
-                    <span
+                 { openNow && <span
                       className={styles.openBadgeHors}
                       style={
                         openNow
@@ -378,7 +378,7 @@ export default function Main() {
                       }
                     >
                       Abrimos em {left} {left === 1 ? "hora" : "horas"}
-                    </span>
+                    </span>}
                   </div>
                   <div>
                     <h1 className={styles.heroTitle}>O Verdadeiro</h1>
