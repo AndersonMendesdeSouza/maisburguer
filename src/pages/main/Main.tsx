@@ -367,7 +367,7 @@ export default function Main() {
                     <span className={styles.ratingBadge}>
                       4.8 <Star size={14} />
                     </span>
-                    {openNow && (
+                    {!openNow && (
                       <span
                         className={styles.openBadgeHors}
                         style={
